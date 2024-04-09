@@ -1,0 +1,1 @@
+/*ici sera défini l'unique fonction dans laquelle sera transféré le code du serveur*/

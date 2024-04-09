@@ -1,0 +1,45 @@
+/*Formulaire de connexion*/
+
+.login-form {
+    width: 340px;
+    margin: 50px auto;
+}
+
+
+.login-form form {
+    margin-bottom: 15px;
+    background: #6b7d7d;
+    padding: 30px;
+}
+
+.login-form h2 {
+    margin: 0 0 15px;
+}
+
+.form-control,
+.btn {
+    min-height: 38px;
+    border-radius: 2px;
+}
+
+.btn {
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.form-group {
+    background-color: white;
+}
+
+/*texte*/
+
+.msg {
+    margin-bottom: 0px;
+    text-align: center;
+    padding: 2%;
+}
+
+
+.text-center {
+    color: white;
+}

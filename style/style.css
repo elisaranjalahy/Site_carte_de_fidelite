@@ -1,0 +1,17 @@
+body {
+    background-color: rgb(215, 215, 227);
+
+}
+
+.col-12.centered {
+    padding: 0;
+}
+
+.titre {
+    background-color: #6b7d7d;
+    margin-bottom: 2px;
+    text-align: center;
+    padding: 2%;
+    width: 100%;
+    color: white;
+}
