@@ -1,0 +1,9 @@
+<!-- e fichier definira la page d'accueil/le site personnalisé pour le client -->
+<h1>Liste des cadeaux :</h1>
+<ul>
+    <% for(let cadeau of cadeaux) { %>
+        <li>
+            <%= cadeau.nom_cadeau %> - <%= cadeau.points_cadeau %>
+        </li>
+        <% } %>
+</ul>
