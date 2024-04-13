@@ -1,9 +1,11 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const path = require("path");
 const server = express();
 const port = 8080;
-const view = "./view";
 server.set("view engine", "ejs");
+server.use(express.static(path.join(__dirname, "public")));
+server.set("views", path.join(__dirname, "views"));
 
 // bodyParser permet d'analyser les données du corps des requêtes
 server.use(bodyParser.urlencoded({ extended: true }));
@@ -22,6 +24,8 @@ const pool = new pg.Pool({
 
 let cadeaux = []; //tous les cadeaux proposés par le site
 
+
+//Fonctions
 
 // récupérer les éléments de la table "cadeaux" depuis la base de données et les stocker dans le tableau "cadeaux"
 async function remplirTableauCadeau() {
@@ -48,12 +52,15 @@ remplirTableauCadeau()
 
 
 
+
+
+
+
 //GESTION DES ROUTES
 
 // route pour gérer la soumission du formulaire de connexion
 server.post("/connexion", async (req, res) => {
 
-    console.log(`ICI`);
     const { pseudo, mdp } = req.body; //recupere les données du formulaire soumis
     const client = await pool.connect(); //se conencte à la bdd
     try {
@@ -77,8 +84,10 @@ server.post("/connexion", async (req, res) => {
 
 
 
+
 //premiere page affichée au lancement du serveu: page de connexion
 server.get("/", (req, res) => {
+    //res.render(path.join(view, "connexion"));
     res.render("connexion");
 });
 
