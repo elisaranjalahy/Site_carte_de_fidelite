@@ -10,7 +10,7 @@ Pour créer la base de données :
 
 ***Connection à Postgres***
 1) Se placer dans le dossier : database
-2) Entrez la commande : `psql -U elisa -W postgres` et entrez le mot de passe : **raliz** 
+2) Entrez la commande : `psql -U id -W postgres` où ***id*** est votre identifiant et entrez le mot de passe : **raliz** 
 
 ***Vous êtes à présent dans postgres***
 
