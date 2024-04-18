@@ -44,7 +44,7 @@ function toRender() { //comme un tableau de tous les éléments à rendre mais b
 }
 
 
-//Fonctions
+//FONCTIONS
 
 // récupérer les éléments de la table "cadeaux" depuis la base de données et les stocker dans le tableau "cadeaux"
 async function remplirTableauCadeau() {
@@ -71,7 +71,7 @@ remplirTableauCadeau()
 
 
 //middleware pour gerer l'accessibilité au routes
-async function estConnecté(req, res, next) {
+function estConnecté(req, res, next) {
     // vérifie si le cookie d'authentification existe
     console.log("Alors");
     console.log(req.path);
@@ -110,9 +110,7 @@ async function estConnecté(req, res, next) {
 
 }
 
-/*function toLogOut(req, res, next) {
-    if (req.path == "")
-}*/
+
 
 function errCo(req, res, next) {
     if (erreur == "connexion" || erreur == "authentification") {
