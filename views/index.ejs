@@ -1,9 +1,40 @@
 <!-- e fichier definira la page d'accueil/le site personnalisé pour le client -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!--"configuration"-->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>RESMU</title>
+</head>
+
 <h1>Liste des cadeaux :</h1>
-<ul>
-    <% for(let cadeau of cadeaux) { %>
-        <li>
-            <%= cadeau.nom_cadeau %> - <%= cadeau.points_cadeau %>
-        </li>
+
+<body>
+
+    <!--MESSAGES D'ALERTE-->
+    <% if (estDeco) { %>
+        <script>alert("Vous allez être déconnecté.");
+            setTimeout(function () {
+                location.reload(); //rafraichit après avoir fermé la page => ramene à la page de connexion
+            }, 300);
+        </script>
         <% } %>
-</ul>
+            <!--FIN DES MESSAGES D'ALERTE-->
+
+            <h1>Bienvenue sur la page d'accueil</h1>
+
+            <ul>
+                <% for(let cadeau of cadeaux) { %>
+                    <li>
+                        <%= cadeau.nom_cadeau %> - <%= cadeau.points_cadeau %>
+                    </li>
+                    <% } %>
+            </ul>
+
+
+</body>
+
+</html>
