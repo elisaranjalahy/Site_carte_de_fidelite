@@ -41,7 +41,7 @@ Pour supprimer la base de données et se deconnecter :
 ***Dans postgres*** 
 
 0) Répétez les étapes 0 et 1 précédentes.
-1) Entrez la commande : `\i database/delete_databse.sql`
+1) Entrez la commande : `\i database/delete_database.sql`
 2) Entrez la commande : `\quit` ou `\q` <!--ce qui vous fera sortir de Postgres-->
 
 
