@@ -11,7 +11,7 @@ h1 {
     background-color: #6b7d7d;
     color: #fff;
     padding: 20px;
-    margin-bottom: 20px; 
+    margin-bottom: 20px;
 }
 
 .card-title {
@@ -19,13 +19,13 @@ h1 {
     color: #fff;
     padding: 10px;
     margin: 0;
-    border-radius: 5px 5px 0 0; 
+    border-radius: 5px 5px 0 0;
     text-align: center;
 }
 
 .card-body {
-    background-color: #ddd; 
-    color:#6b7d7d;
+    background-color: #ddd;
+    color: #6b7d7d;
     padding: 20px;
     border-radius: 0 0 5px 5px;
 }
@@ -48,5 +48,39 @@ img {
 }
 
 .btn-container {
-    color:#4a9068
+    color: #4a9068
+}
+
+.titre_cadeau {
+    color: rgb(29, 28, 34);
+    text-decoration: underline;
+}
+
+.point {
+    color: rgb(96, 79, 79);
+}
+
+.card-body image1,
+.card-body image2,
+.card-body image3,
+.card-body image4,
+.card-body image5,
+.card-body image6,
+.card-body image7,
+.card-body image9,
+.card-body image10,
+.card-body image11,
+.card-body image12,
+.card-body image13 {
+    width: 350px;
+    height: 10px;
+
+}
+
+
+.card-body image8,
+.card-body image15,
+.card-body image14 {
+    width: 250px;
+    height: 250px;
 }

@@ -107,7 +107,7 @@ INSERT INTO CADEAUX (
     '/images/image8.jpeg'
 ),
 (
-    'Sac pour magnésie ARCTERYX',
+    'Sac à magnésie ARCTERYX',
     150,
     '/images/image9.jpeg'
 ),
