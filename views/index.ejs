@@ -1,18 +1,23 @@
-<!-- e fichier definira la page d'accueil/le site personnalisé pour le client -->
-
 <!DOCTYPE html>
 <html lang="fr">
 
 <head>
-    <!--"configuration"-->
+    <!-- Configuration -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link href="/style/style.css" rel="stylesheet">
 
     <title>RESMU</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <!--CSS-->
+    <link href="/style/index.css" rel="stylesheet">
 </head>
 
 <body>
+
 
     <!--MESSAGES D'ALERTE-->
     <% if (estDeco) { %>
@@ -37,6 +42,37 @@
             </ul>
 
 
+            <div class="container">
+                <h1 class="main-title">Bienvenue sur la page d'accueil</h1>
+                <div class="row">
+                    <div class="col-md-6"> <!-- Colonne pour les cadeaux -->
+                        <div class="card">
+                            <div class="card-title">Liste des cadeaux :</div>
+                            <div class="card-body">
+                                <ul>
+                                    <!-- Boucle pour afficher les cadeaux -->
+                                    <% for(let cadeau of cadeaux) { %>
+                                        <li>
+                                            <%= cadeau.nom_cadeau %> : <%= cadeau.points_cadeau %> pts <img id="img1"
+                                                        src="<%=cadeau.image_cadeau %>" alt="Image de 2mousquetons">
+                                                    <div class="btn-container">
+                                                        <!-- Conteneur pour centrer le bouton -->
+                                                        <button class="btn btn-success">Ajouter au panier</button>
+                                                        <!-- Bouton "Ajouter au panier" -->
+                                                    </div>
+                                        </li>
+                                        <% } %>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6"> <!-- Colonne pour la panier (vide pour l'instant) -->
+                        <div class="card">
+                            <div class="card-title">Panier :</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
 </body>
 
