@@ -23,14 +23,16 @@
             <!--FIN DES MESSAGES D'ALERTE-->
 
             <h1>Bienvenue sur la page d'accueil</h1>
-            <h2>Liste des cadeaux :</h1>
+            <h2>Liste des cadeaux :</h2>
 
-                <ul>
-                    <% for(let cadeau of cadeaux) { %>
-                        <li>
-                            <%= cadeau.nom_cadeau %> - <%= cadeau.points_cadeau %> - <img id="img1"
-                                        src="<%=cadeau.image_cadeau %>" alt="Image de 2mousquetons">
-                        </li>
+            <ul>
+                <% for(let cadeau of cadeaux) { %>
+                    <li>
+                        <%= cadeau.nom_cadeau %> - <%= cadeau.points_cadeau %> - <img id="img1"
+                                    src="<%=cadeau.image_cadeau %>" alt="Image de 2mousquetons">
+                    </li>
+                    <% } %>
+            </ul>
 
 
 

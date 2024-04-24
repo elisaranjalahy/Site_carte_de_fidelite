@@ -118,6 +118,7 @@ function errCo(req, res, next) {
         console.log("MTN");
         return res.render("connexion", toRender());
     } else {
+        console.log("fffffdN");
         next();
     }
 }
