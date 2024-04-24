@@ -25,7 +25,7 @@ h1 {
 
 .card-body {
     background-color: #ddd; 
-    color: #fff;
+    color:#6b7d7d;
     padding: 20px;
     border-radius: 0 0 5px 5px;
 }
@@ -45,4 +45,8 @@ img {
     max-width: 100px;
     height: auto;
     border: 1px solid #ccc;
+}
+
+.btn-container {
+    color:#4a9068
 }
