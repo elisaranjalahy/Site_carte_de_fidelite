@@ -1,12 +1,14 @@
 <!-- e fichier definira la page d'accueil/le site personnalisé pour le client -->
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 
 <head>
     <!--"configuration"-->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="/style/style.css" rel="stylesheet">
+
     <title>RESMU</title>
 </head>
 
@@ -26,12 +28,12 @@
             <h2>Liste des cadeaux :</h2>
 
             <ul>
-                <% for(let cadeau of cadeaux) { %>
+                <% cadeaux.forEach(function(cadeau, i) { %>
                     <li>
-                        <%= cadeau.nom_cadeau %> - <%= cadeau.points_cadeau %> - <img id="img1"
-                                    src="<%=cadeau.image_cadeau %>" alt="Image de 2mousquetons">
+                        <%= cadeau.nom_cadeau %> - <%= cadeau.points_cadeau %> - <img class="image<%= i + 1 %>"
+                                    src="<%=cadeau.image_cadeau %>">
                     </li>
-                    <% } %>
+                    <% }); %>
             </ul>
 
 
