@@ -47,6 +47,9 @@ img {
     border: 1px solid #ccc;
 }
 
+.titre_cadeau{
+    font-size: smaller;
+}
 .btn-container {
     color: #4a9068
 }

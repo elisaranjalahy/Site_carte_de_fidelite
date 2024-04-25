@@ -33,35 +33,37 @@
             <div class="container">
                 <h1 class="main-title">Bienvenue sur la page d'accueil</h1>
                 <div class="row">
-                    <div class="col-md-6"> <!-- Colonne pour les cadeaux -->
+                    <!-- Colonne pour les cadeaux -->
+                    <div class="col-md-6">
                         <div class="card">
                             <div class="card-title">Liste des cadeaux :</div>
                             <div class="card-body">
-                                <ul>
+                                <div class="row">
                                     <!-- Boucle pour afficher les cadeaux -->
                                     <% cadeaux.forEach(function(cadeau, i) { %>
-                                        <li>
-                                            <h3 class="titre_cadeau">
-                                                <%=cadeau.nom_cadeau %> :
-                                            </h3>
-                                            <p class="point">
-                                                <%= cadeau.points_cadeau %> pts
-                                            </p>
-                                            <img class="image<%= i + 1 %>" src="<%=cadeau.image_cadeau %>">
-                                            <div class="btn-container">
-                                                <!-- Conteneur pour centrer le bouton -->
-                                                <br>
-                                                <button class="btn btn-success">Ajouter au panier</button>
-                                                <br><br>
-                                                <!-- Bouton "Ajouter au panier" -->
-                                            </div>
-                                        </li>
-                                        <% }); %>
-                                </ul>
+                                    <div class="col-md-4">
+                                        <ul>
+                                            <li>
+                                                <h3 class="titre_cadeau"><%=cadeau.nom_cadeau %> :</h3>
+                                                <p class="point"><%= cadeau.points_cadeau %> pts</p>
+                                                <img class="imagecadeau" src="<%=cadeau.image_cadeau %>">
+                                                <div class="btn-container">
+                                                    <!-- Conteneur pour centrer le bouton -->
+                                                    <br>
+                                                        <button class="btn btn-success">Ajouter au panier</button>
+                                                    <br><br>
+                                                    <!-- Bouton "Ajouter au panier" -->
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <% }); %>
+                                </div>
                             </div>
-                        </div>
+                            </div>
                     </div>
-                    <div class="col-md-6"> <!-- Colonne pour la panier (vide pour l'instant) -->
+                     <!-- Colonne pour la panier (vide pour l'instant) -->
+                    <div class="col-md-6">
                         <div class="card">
                             <div class="card-title">Panier :</div>
                         </div>
