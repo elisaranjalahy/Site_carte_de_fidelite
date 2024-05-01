@@ -32,12 +32,13 @@
 
             <div class="container-fluid">
                 <div class="head">
-                    <div class="container-fluid d-flex justify-content-between align-items-center">
+                    <div
+                        class="container-fluid d-flex flex-column flex-md-row justify-content-md-between align-items-md-center">
                         <!-- Section des informations -->
-                        <div class="info d-flex align-items-center">
-                            <h3 class="mr-3">pts : <%= currentUser.points %>
+                        <div class="info d-flex align-items-center mb-3 mb-md-0">
+                            <h3 class="pts">pts : <%= currentUser.points %>
                             </h3>
-                            <h1 class="main-title text-center flex-grow-1">RESMU<br>@<%= currentUser.pseudo %>
+                            <h1 class="main-title text-center flex-grow-1 mb-0">RESMU<br>@<%= currentUser.pseudo %>
                             </h1>
                         </div>
 
