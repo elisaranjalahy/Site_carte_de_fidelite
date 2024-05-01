@@ -15,6 +15,7 @@ server.use(bodyParser.urlencoded({ extended: true }));
 
 //creation de la pool
 const pg = require("pg");
+const { removeData } = require("jquery");
 const pool = new pg.Pool({
     host: "localhost",
     database: "my_database",
@@ -23,68 +24,86 @@ const pool = new pg.Pool({
 });
 
 
+//VARIABLE
 
-let cadeaux = []; //tous les cadeaux proposés par le site
 let sessionStart = false;
 let pageActuelle = "connexion";
-let erreur = "";
-let estDeco = true;
 
 
 
-function toRender() { //comme un tableau de tous les éléments à rendre mais bien actualisé à chaque fois
-    return {
-        cadeaux: cadeaux,
-        sessionStart: sessionStart,
-        pageActuelle: pageActuelle,
-        erreur: erreur,
-        estDeco: estDeco
+let pseudo = "";
+let mdp = "";
+let points = 0;
+let anniversaire = "";
 
-    };
-}
+const currentUser = {
+    pseudo: "",
+    mdp: "",
+    anniversaire: "",
+    points: 0
 
+};
 
 //FONCTIONS
 
-// récupérer les éléments de la table "cadeaux" depuis la base de données et les stocker dans le tableau "cadeaux"
-async function remplirTableauCadeau() {
-    const client = await pool.connect();
-    try {
-        const resultats = await client.query('SELECT * FROM cadeaux');
-        cadeaux = resultats.rows;
 
+//BDD
+
+async function getUser(pseudo, mdp) {
+    const client = await pool.connect(); // Se connecte à la base de données
+    try {
+        const result = await client.query('SELECT * FROM clients WHERE pseudo = $1 AND mot_de_passe = $2', [pseudo, mdp]);
+        console.log(result.rows);
+        return result; // Retourne le résultat de la requête
     } catch (error) {
-        console.error('Erreur lors de la récupération des données de la table cadeaux', error.message);
+        console.error('Erreur lors de la vérification des informations de connexion :', error.message);
+        throw error; // Lève l'erreur pour la traiter à un niveau supérieur
+
     } finally {
         client.release();
     }
 }
 
-// appel de la fonction pour remplir le tableau "cadeau" au démarrage du serveur
-remplirTableauCadeau()
-    .then(() => {
-        console.log('Le tableau "cadeaux" a été rempli avec succès.');
-    })
-    .catch(err => {
-        console.error('Erreur lors du remplissage du tableau "cadeaux":', err);
-    });
+async function getCadeaux() {
+    const client = await pool.connect(); // Se connecte à la base de données
+    let result = [];
+    try {
+        const data = await client.query('SELECT * FROM cadeaux');
+        for (let row of data.rows) {
+            result.push(row);
+        }
+        return result;
+    } catch (error) {
+        console.error('Erreur lors de la récupération des données de la table cadeaux', error.message);
+        result = [];
+        return result;
+    } finally {
+        client.release();
+    }
 
+}
+
+
+//MIDDLEWARE
 
 //middleware pour gerer l'accessibilité au routes
 function estConnecté(req, res, next) {
     // vérifie si le cookie d'authentification existe
     console.log("Alors");
+    console.log("llll");
     console.log(req.path);
+    let erreur = "";
 
     if (sessionStart) { //connecté
         if (pageActuelle !== "connexion" /*chemin actuek*/ && req.path === "/connexion" /*chemin demandé*/) {
-            res.clearCookie('monCookie'); //déconnecte l'user
+            //res.clearCookie('monCookie'); //déconnecte l'user
+            clearUser(currentUser);
+            console.log("je suis la");
+            console.log(pageActuelle);
+            console.log("/" + pageActuelle);
             sessionStart = false;
-            console.log("yo");
-            estDeco = true;
-            res.render(pageActuelle, toRender());
+            res.render("index", { sessionStart: sessionStart, currentUser: currentUser }); //rend la vue index avec le tableau cadeaux
         } else {
-            console.log("ras");
             next();
         }
 
@@ -93,35 +112,31 @@ function estConnecté(req, res, next) {
 
         if (req.path !== "/connexion") { //demande d'acceder à une page du site
             if (req.path == "/connexion?erreur=authentification") {
-                erreur = "authentification";
-                next();
+                res.render(pageActuelle, { erreur: "authentification", sessionStart: sessionStart });
             } else {
-                erreur = "connexion";
-                next();
+                res.render(pageActuelle, { erreur: "connexion", sessionStart: sessionStart });
+
 
             }
 
-        } else {
-            console.log("pas co");
-            next();
+
         }
-
-    }
-
-}
-
-
-
-function errCo(req, res, next) {
-    if (erreur == "connexion" || erreur == "authentification") {
-        pageActuelle = "connexion";
-        console.log("MTN");
-        return res.render("connexion", toRender());
-    } else {
-        console.log("fffffdN");
         next();
+
     }
+
 }
+
+//auxiliaires
+
+function clearUser(user) {
+    user["pseudo"] = "";
+    user["mdp"] = "";
+    user["anniversaire"] = "";
+    user["points"] = "";
+}
+
+
 
 
 //GESTION DES ROUTES
@@ -129,55 +144,56 @@ function errCo(req, res, next) {
 // route pour gérer la soumission du formulaire de connexion
 server.post("/connexion", async (req, res) => {
 
-    const { pseudo, mdp } = req.body; //recupere les données du formulaire soumis
-    const client = await pool.connect(); //se conencte à la bdd
-    try {
-        // vérifier si les informations de connexion correspondent à une entrée dans la table client
-        const resultat = await client.query('SELECT * FROM clients WHERE pseudo = $1 AND mot_de_passe = $2', [pseudo, mdp]);
+    currentUser["pseudo"] = req.body.pseudo;
+    currentUser["mdp"] = req.body.mdp;
 
-        if (resultat.rows.length > 0) {
-            console.log('ICI');
-            // authentification réussie, redirection de l'utilisateur vers la page d'accueil
-            //enregistré comme connecté avec un cookie
-            res.cookie('monCookie', 'authentifié', { maxAge: 365 * 24 * 60 * 60 * 1000, httpOnly: true }); // maxAge définit la durée de vie du cookie en millisecondes (ici on met 1an)
-            sessionStart = true; //on démarre une "session"
-            estDeco = false;
-            console.log(pageActuelle);
-            pageActuelle = "index";
-            console.log("ALLLO");
-            erreur = "";
-            res.redirect("/index");
-        } else {
-            // authentification ratée, redirection de l'utilisateur vers la page de connexion 
-            res.redirect("/connexion?erreur=authentification");
-        }
-    } catch (error) {
-        console.error('Erreur lors de la vérification des informations de connexion:', error.message);
-        res.redirect("/connexion?erreur=connexion");
-    } finally {
-        client.release();
+
+    // vérifier si les informations de connexion correspondent à une entrée dans la table client
+    const resultat = await getUser(currentUser["pseudo"], currentUser["mdp"]);
+
+
+    if (resultat.rows.length > 0) {
+        console.log('ICI');
+        // authentification réussie, redirection de l'utilisateur vers la page d'accueil
+        //enregistré comme connecté avec un cookie
+        //res.cookie('monCookie', 'authentifié', { maxAge: 365 * 24 * 60 * 60 * 1000, httpOnly: true }); // maxAge définit la durée de vie du cookie en millisecondes (ici on met 1an)
+        sessionStart = true; //on démarre une "session"
+        res.redirect("/index");;
+    } else {
+        // authentification ratée, redirection de l'utilisateur vers la page de connexion 
+        res.redirect("/connexion?erreur=authentification");
     }
+
 });
 
 //premiere page affichée au lancement du serveu: page de connexion
 server.get("/", (req, res) => {
     pageActuelle = "/";
-    res.render("connexion", toRender());
+    if (req.query.erreur === "authentification") {
+        res.render("connexion", { erreur: "authentification" });
+    }
+    if (req.query.erreur === "connexion") {
+        res.render("connexion", { erreur: "connexion" });
+    }
+    if (req.query.erreur !== "authentification" && req.query.erreur !== "authentification") {
+        res.render("connexion", { erreur: "" });
+    }
 });
 
 server.get("/connexion", estConnecté, (req, res) => {
     pageActuelle = "connexion";
-    erreur = req.query.erreur || "";
-    res.render("connexion", toRender());
+    let erreur = req.query.erreur || "";
+    res.render("connexion", { erreur: erreur });
 
 });
 
 //page d'accueil,  le site en général
-server.get("/index", estConnecté, errCo, (req, res) => {
+server.get("/index", estConnecté, async (req, res) => {
     pageActuelle = "index";
-    res.render("index", toRender()); //rend la vue index avec le tableau cadeaux
-});
+    const cadeaux = await getCadeaux();
+    res.render("index", { sessionStart: sessionStart, currentUser: currentUser, cadeaux: cadeaux }); //rend la vue index avec le tableau cadeaux
 
+});
 
 
 // route finale : l'argument next est ici ignoré
