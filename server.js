@@ -31,30 +31,30 @@ let pageActuelle = "connexion";
 
 
 
-let pseudo = "";
-let mdp = "";
-let points = 0;
-let anniversaire = "";
+
 
 const currentUser = {
+    prenom: "",
+    nom: "",
     pseudo: "",
+    email: "",
     mdp: "",
+    points: 0,
     anniversaire: "",
-    points: 0
-
+    admin: false
 };
+
 
 //FONCTIONS
 
 
-//BDD
+//bdd
 
 async function getUser(pseudo, mdp) {
     const client = await pool.connect(); // Se connecte à la base de données
     try {
         const result = await client.query('SELECT * FROM clients WHERE pseudo = $1 AND mot_de_passe = $2', [pseudo, mdp]);
-        console.log(result.rows);
-        return result; // Retourne le résultat de la requête
+        return result;
     } catch (error) {
         console.error('Erreur lors de la vérification des informations de connexion :', error.message);
         throw error; // Lève l'erreur pour la traiter à un niveau supérieur
@@ -84,25 +84,19 @@ async function getCadeaux() {
 }
 
 
-//MIDDLEWARE
+//middleware
 
 //middleware pour gerer l'accessibilité au routes
 function estConnecté(req, res, next) {
     // vérifie si le cookie d'authentification existe
-    console.log("Alors");
-    console.log("llll");
-    console.log(req.path);
-    let erreur = "";
+
 
     if (sessionStart) { //connecté
         if (pageActuelle !== "connexion" /*chemin actuek*/ && req.path === "/connexion" /*chemin demandé*/) {
             //res.clearCookie('monCookie'); //déconnecte l'user
             clearUser(currentUser);
-            console.log("je suis la");
-            console.log(pageActuelle);
-            console.log("/" + pageActuelle);
             sessionStart = false;
-            res.render("index", { sessionStart: sessionStart, currentUser: currentUser }); //rend la vue index avec le tableau cadeaux
+            res.render(pageActuelle, { sessionStart: false, currentUser: currentUser, erreur: "" }); //rend la vue index avec le tableau cadeaux
         } else {
             next();
         }
@@ -120,20 +114,26 @@ function estConnecté(req, res, next) {
             }
 
 
+        } else {
+            next();
         }
-        next();
 
     }
 
 }
 
-//auxiliaires
+//Fonctions auxiliaires
 
 function clearUser(user) {
     user["pseudo"] = "";
     user["mdp"] = "";
     user["anniversaire"] = "";
-    user["points"] = "";
+    user["points"] = 0;
+    user["prenom"] = "";
+    user["nom"] = "";
+    user["email"] = "";
+    user["admin"] = false;
+
 }
 
 
@@ -153,10 +153,21 @@ server.post("/connexion", async (req, res) => {
 
 
     if (resultat.rows.length > 0) {
-        console.log('ICI');
+        // authentification réussie, redirection de l'utilisateur vers la page d'accueil
+        const userData = resultat.rows[0]; // Première ligne de résultats
+
+        currentUser["pseudo"] = userData["pseudo"];
+        currentUser["mdp"] = userData["mot_de_passe"];
+        currentUser["anniversaire"] = userData["anniversaire"];
+        currentUser["points"] = userData["points_client"];
+        currentUser["prenom"] = userData["prenom"];
+        currentUser["nom"] = userData["nom"];
+        currentUser["email"] = userData["email"];
+        currentUser["admin"] = userData["admin"];
         // authentification réussie, redirection de l'utilisateur vers la page d'accueil
         //enregistré comme connecté avec un cookie
         //res.cookie('monCookie', 'authentifié', { maxAge: 365 * 24 * 60 * 60 * 1000, httpOnly: true }); // maxAge définit la durée de vie du cookie en millisecondes (ici on met 1an)
+        console.log(resultat.rows);
         sessionStart = true; //on démarre une "session"
         res.redirect("/index");;
     } else {
@@ -164,6 +175,11 @@ server.post("/connexion", async (req, res) => {
         res.redirect("/connexion?erreur=authentification");
     }
 
+});
+
+server.post("/deconnexion", async (req, res) => {
+
+    res.redirect("/connexion");
 });
 
 //premiere page affichée au lancement du serveu: page de connexion
@@ -194,7 +210,6 @@ server.get("/index", estConnecté, async (req, res) => {
     res.render("index", { sessionStart: sessionStart, currentUser: currentUser, cadeaux: cadeaux }); //rend la vue index avec le tableau cadeaux
 
 });
-
 
 // route finale : l'argument next est ici ignoré
 server.use((req, res) => {

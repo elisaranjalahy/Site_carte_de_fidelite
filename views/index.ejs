@@ -33,16 +33,24 @@
             <div class="container-fluid">
                 <div class="head">
                     <div class="container-fluid d-flex justify-content-between align-items-center">
-                        <div class="info">
-                            <h3>pts :</h3>
+                        <!-- Section des informations -->
+                        <div class="info d-flex align-items-center">
+                            <h3 class="mr-3">pts : <%= currentUser.points %>
+                            </h3>
+                            <h1 class="main-title text-center flex-grow-1">RESMU<br>@<%= currentUser.pseudo %>
+                            </h1>
                         </div>
-                        <h1 class="main-title text-center flex-grow-1">RESMU<br>@<%=currentUser.pseudo%>
-                        </h1>
+
+                        <!-- Bouton de déconnexion -->
+                        <div>
+                            <form action="/deconnexion" method="POST">
+                                <button type="submit" class="btn btn-danger">Se déconnecter</button>
+                            </form>
+                        </div>
                     </div>
                 </div>
 
-
-
+                <!-- Reste de votre contenu HTML ici -->
                 <div class="row">
                     <!-- Colonne pour les cadeaux -->
                     <div class="col-md-6">
