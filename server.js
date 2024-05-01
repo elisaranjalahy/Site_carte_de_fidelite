@@ -83,6 +83,26 @@ async function getCadeaux() {
 
 }
 
+async function getMesCadeaux() {
+    const client = await pool.connect(); // Se connecte à la base de données
+    let result = [];
+    try {
+
+        const data = await client.query('SELECT * FROM cadeaux WHERE points_cadeau <= $1', [currentUser.points]);
+        for (let row of data.rows) {
+            result.push(row);
+        }
+        return result;
+    } catch (error) {
+        console.error('Erreur lors de la récupération des données de la table cadeaux', error.message);
+        result = [];
+        return result;
+    } finally {
+        client.release();
+    }
+}
+
+
 
 //middleware
 
@@ -206,9 +226,15 @@ server.get("/connexion", estConnecté, (req, res) => {
 //page d'accueil,  le site en général
 server.get("/index", estConnecté, async (req, res) => {
     pageActuelle = "index";
-    const cadeaux = await getCadeaux();
-    res.render("index", { sessionStart: sessionStart, currentUser: currentUser, cadeaux: cadeaux }); //rend la vue index avec le tableau cadeaux
 
+    if (currentUser["admin"]) {
+        const cadeaux = await getCadeaux();
+        res.render("index", { sessionStart: sessionStart, currentUser: currentUser, cadeaux: cadeaux }); //rend la vue index avec le tableau cadeaux
+    } else {
+        const cadeaux = await getMesCadeaux();
+        res.render("index", { sessionStart: sessionStart, currentUser: currentUser, cadeaux: cadeaux }); //rend la vue index avec le tableau cadeaux
+
+    }
 });
 
 // route finale : l'argument next est ici ignoré
