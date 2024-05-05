@@ -1,5 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const session = require("express-session");
 
 const server = express();
 const port = 8080;
@@ -8,6 +9,12 @@ const path = require("path");
 server.set("view engine", "ejs");
 server.set("views", path.join(__dirname, "views"));
 server.use(express.static(path.join(__dirname, "public")));
+
+server.use(session({
+    secret: "secret_key", // Clé secrète pour signer la session
+    resave: false,
+    saveUninitialized: true
+}));
 
 // bodyParser permet d'analyser les données du corps des requêtes
 server.use(bodyParser.urlencoded({ extended: true }));
@@ -202,6 +209,25 @@ server.post("/deconnexion", async (req, res) => {
     res.redirect("/connexion");
 });
 
+//route pour l'ajout au panier
+server.post("/ajouter-au-panier", (req, res) => {
+    const idCadeau = req.body.id_cadeau;
+    const nomCadeau = req.body.nom_cadeau;
+    const pointsCadeau = req.body.points_cadeau;
+
+    // Récupérer le panier de l'utilisateur depuis la session
+    let panier = req.session.panier || [];
+    
+    // Ajouter le cadeau au panier
+    panier.push({ id: idCadeau, nom: nomCadeau, points: pointsCadeau });
+
+    // Mettre à jour le panier dans la session
+    req.session.panier = panier;
+
+    res.redirect("/index"); // Rediriger vers la page d'accueil
+});
+
+
 //premiere page affichée au lancement du serveu: page de connexion
 server.get("/", (req, res) => {
     pageActuelle = "/";
@@ -226,19 +252,22 @@ server.get("/connexion", estConnecté, (req, res) => {
 //page d'accueil,  le site en général
 server.get("/index", estConnecté, async (req, res) => {
     pageActuelle = "index";
-
+    const panier = req.session.panier || [];
     if (currentUser["admin"]) {
         const cadeaux = await getCadeaux();
-        res.render("index", { sessionStart: sessionStart, currentUser: currentUser, cadeaux: cadeaux }); //rend la vue index avec le tableau cadeaux
+        res.render("index", { sessionStart: sessionStart, currentUser: currentUser, cadeaux: cadeaux, panier:panier }); //rend la vue index avec le tableau cadeaux
     } else {
         const cadeaux = await getMesCadeaux();
-        res.render("index", { sessionStart: sessionStart, currentUser: currentUser, cadeaux: cadeaux }); //rend la vue index avec le tableau cadeaux
+        res.render("index", { sessionStart: sessionStart, currentUser: currentUser, cadeaux: cadeaux,panier:panier }); //rend la vue index avec le tableau cadeaux
 
     }
 });
 
 // route finale : l'argument next est ici ignoré
 server.use((req, res) => {
+    if (!req.session.panier) {
+        req.session.panier = []; // Initialiser le panier s'il n'existe pas
+    }
     // gestion des requêtes non attendues
     res.status(404).send("Page not found");
 });

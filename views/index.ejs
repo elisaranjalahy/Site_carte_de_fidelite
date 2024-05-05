@@ -74,7 +74,13 @@
                                                     <div class="btn-container">
                                                         <!-- Conteneur pour centrer le bouton -->
                                                         <br>
-                                                        <button class="btn btn-success">Ajouter au panier</button>
+                                                        <form action="/ajouter-au-panier" method="POST">
+                                                            <input type="hidden" name="id_cadeau" value="<%= cadeau.id_cadeau %>">
+                                                            <input type="hidden" name="nom_cadeau" value="<%= cadeau.nom_cadeau %>">
+                                                            <input type="hidden" name="points_cadeau" value="<%= cadeau.points_cadeau %>">
+                                                            <button type="submit" class="btn btn-success">Ajouter au panier</button>
+                                                        </form>
+                                                        
                                                         <br><br>
                                                         <!-- Bouton "Ajouter au panier" -->
                                                     </div>
@@ -91,6 +97,17 @@
                     <div class="col-md-6">
                         <div class="card">
                             <div class="card-title">Panier :</div>
+                            <div class="card-body">
+                                <% if (panier.length > 0) { %>
+                                    <ul>
+                                        <% panier.forEach(function(item) { %>
+                                            <li><%= item.nom %> - <%= item.points %> points</li>
+                                        <% }); %>
+                                    </ul>
+                                <% } else { %>
+                                    <p>Votre panier est vide.</p>
+                                <% } %>
+                            </div>
                         </div>
                     </div>
                 </div>
