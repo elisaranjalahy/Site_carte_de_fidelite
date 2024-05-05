@@ -23,10 +23,14 @@ CREATE TABLE CADEAUX (
 
 
 CREATE TABLE PANIER (
-    ID_CADEAU INTEGER,
-    NOM_CADEAU TEXT,
-    POINTS_CADEAU INTEGER
+    id SERIAL PRIMARY KEY,
+    id_utilisateur INTEGER,
+    id_cadeau INTEGER,
+    quantite INTEGER,
+    FOREIGN KEY (id_utilisateur) REFERENCES CLIENTS(id),
+    FOREIGN KEY (id_cadeau) REFERENCES CADEAUX(id_cadeau)
 );
+
 
 --REMPLISSAGE des tables
 INSERT INTO CLIENTS (

@@ -48,7 +48,8 @@ const currentUser = {
     mdp: "",
     points: 0,
     anniversaire: "",
-    admin: false
+    admin: false,
+    id:0
 };
 
 
@@ -109,7 +110,37 @@ async function getMesCadeaux() {
     }
 }
 
+async function getPanierUtilisateur(idUtilisateur) {
+    const client = await pool.connect();
+    try {
+        const queryResult = await client.query(`
+            SELECT p.id_cadeau, p.quantite, c.nom_cadeau, c.points_cadeau
+            FROM panier p
+            INNER JOIN cadeaux c ON p.id_cadeau = c.id_cadeau
+            WHERE id_utilisateur = $1
+        `, [idUtilisateur]);
+        return queryResult.rows;
+    } catch (error) {
+        console.error('Erreur lors de la récupération du contenu du panier de l\'utilisateur :', error.message);
+        return [];
+    } finally {
+        client.release();
+    }
+}
 
+// Fonction pour récupérer les détails du cadeau à partir de l'ID du cadeau
+async function getCadeauById(idCadeau) {
+    const client = await pool.connect(); // Se connecte à la base de données
+    try {
+        const result = await client.query('SELECT * FROM cadeaux WHERE id_cadeau = $1', [idCadeau]);
+        return result.rows[0]; // Renvoie la première ligne de résultats
+    } catch (error) {
+        console.error('Erreur lors de la récupération des détails du cadeau :', error.message);
+        return null;
+    } finally {
+        client.release();
+    }
+}
 
 //middleware
 
@@ -160,6 +191,7 @@ function clearUser(user) {
     user["nom"] = "";
     user["email"] = "";
     user["admin"] = false;
+    user["id"]=0;
 
 }
 
@@ -191,6 +223,7 @@ server.post("/connexion", async (req, res) => {
         currentUser["nom"] = userData["nom"];
         currentUser["email"] = userData["email"];
         currentUser["admin"] = userData["admin"];
+        currentUser["id"]=userData["id"];
         // authentification réussie, redirection de l'utilisateur vers la page d'accueil
         //enregistré comme connecté avec un cookie
         //res.cookie('monCookie', 'authentifié', { maxAge: 365 * 24 * 60 * 60 * 1000, httpOnly: true }); // maxAge définit la durée de vie du cookie en millisecondes (ici on met 1an)
@@ -210,22 +243,37 @@ server.post("/deconnexion", async (req, res) => {
 });
 
 //route pour l'ajout au panier
-server.post("/ajouter-au-panier", (req, res) => {
+server.post("/ajouter-au-panier", async (req, res) => {
     const idCadeau = req.body.id_cadeau;
-    const nomCadeau = req.body.nom_cadeau;
-    const pointsCadeau = req.body.points_cadeau;
 
-    // Récupérer le panier de l'utilisateur depuis la session
-    let panier = req.session.panier || [];
-    
-    // Ajouter le cadeau au panier
+    // Récupérer l'ID de l'utilisateur depuis la session
+    const idUtilisateur = currentUser.id; // Utilisez l'ID de l'utilisateur actuel
+    const cadeau = await getCadeauById(idCadeau);
+    const nomCadeau = cadeau.nom;
+    const pointsCadeau = cadeau.points; 
+
+    // Ajouter le cadeau au panier de la session de l'utilisateur
+    let panier = req.session.panier || []; // Récupérez le panier de la session
     panier.push({ id: idCadeau, nom: nomCadeau, points: pointsCadeau });
+    req.session.panier = panier; // Mettez à jour le panier dans la session
 
-    // Mettre à jour le panier dans la session
-    req.session.panier = panier;
+    // Ajouter le cadeau au panier de la base de données
+    const client = await pool.connect();
+    try {
+        await client.query("INSERT INTO panier (id_utilisateur, id_cadeau, quantite) VALUES ($1, $2, $3)", [idUtilisateur, idCadeau, 1]);
+        console.log("Cadeau ajouté au panier de la base de données avec succès.");
+    } catch (error) {
+        console.error("Erreur lors de l'ajout du cadeau au panier de la base de données:", error);
+    } finally {
+        client.release();
+    }
 
     res.redirect("/index"); // Rediriger vers la page d'accueil
 });
+
+
+
+
 
 
 //premiere page affichée au lancement du serveu: page de connexion
@@ -249,25 +297,25 @@ server.get("/connexion", estConnecté, (req, res) => {
 
 });
 
-//page d'accueil,  le site en général
+// page d'accueil,  le site en général
 server.get("/index", estConnecté, async (req, res) => {
     pageActuelle = "index";
-    const panier = req.session.panier || [];
-    if (currentUser["admin"]) {
+    const idUtilisateur = currentUser.id;
+    const panier = await getPanierUtilisateur(idUtilisateur); // Récupérez le panier de l'utilisateur avec les détails des cadeaux
+    if (currentUser.admin) {
         const cadeaux = await getCadeaux();
-        res.render("index", { sessionStart: sessionStart, currentUser: currentUser, cadeaux: cadeaux, panier:panier }); //rend la vue index avec le tableau cadeaux
+        res.render("index", { sessionStart: sessionStart, currentUser: currentUser, cadeaux: cadeaux, panier: panier }); // Rend la vue index avec le tableau de cadeaux et le panier de l'utilisateur
     } else {
         const cadeaux = await getMesCadeaux();
-        res.render("index", { sessionStart: sessionStart, currentUser: currentUser, cadeaux: cadeaux,panier:panier }); //rend la vue index avec le tableau cadeaux
-
+        res.render("index", { sessionStart: sessionStart, currentUser: currentUser, cadeaux: cadeaux, panier: panier }); // Rend la vue index avec le tableau de cadeaux et le panier de l'utilisateur
     }
 });
 
 // route finale : l'argument next est ici ignoré
 server.use((req, res) => {
-    if (!req.session.panier) {
+    /*if (!req.session.panier) {
         req.session.panier = []; // Initialiser le panier s'il n'existe pas
-    }
+    }*/
     // gestion des requêtes non attendues
     res.status(404).send("Page not found");
 });
