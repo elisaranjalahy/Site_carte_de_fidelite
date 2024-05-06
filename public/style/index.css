@@ -76,43 +76,77 @@ img {
 }
 
 .titre_cadeau {
-    font-size: smaller;
+
+    color: rgb(221, 227, 221);
+    text-decoration: underline;
+    display: flex;
+    align-items: center;
 }
 
-.btn-container {
-    color: #4a9068
-}
-
-.titre_cadeau {
-    color: rgb(29, 28, 34);
+.titres_client {
+    font-size: small;
+    color: rgb(221, 227, 221);
     text-decoration: underline;
 }
 
-.point {
-    color: rgb(96, 79, 79);
-}
-
-.card-body image1,
-.card-body image2,
-.card-body image3,
-.card-body image4,
-.card-body image5,
-.card-body image6,
-.card-body image7,
-.card-body image9,
-.card-body image10,
-.card-body image11,
-.card-body image12,
-.card-body image13 {
-    width: 350px;
-    height: 10px;
-
+.pts {
+    text-decoration: underline;
 }
 
 
-.card-body image8,
-.card-body image15,
-.card-body image14 {
-    width: 250px;
-    height: 250px;
+
+.btn-container {
+    color: #4a9068;
+    margin-top: auto;
+}
+
+.blocInfoClient {
+    min-height: auto;
+    background-color: #6b7d7d;
+    padding: 15px;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+
+
+.blocInfoCadeau {
+    background-color: #6b7d7d;
+    padding: 15px;
+    border-radius: 5px;
+    height: 85%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+}
+
+.infoClient,
+.infoCadeau {
+    color: white;
+
+}
+
+.image-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100px;
+}
+
+.imagecadeau {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.button-container {
+    position: absolute;
+    bottom: 10px;
+    /* Ajustez la position verticale du bouton par rapport au bas du bloc */
+    left: 50%;
+    /* Alignez le bouton horizontalement au centre du bloc */
+    transform: translateX(-50%);
 }

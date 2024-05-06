@@ -102,7 +102,23 @@ async function getMesCadeaux() {
     }
 }
 
-
+async function getEveryClient() {
+    const client = await pool.connect(); // Se connecte à la base de données
+    let result = [];
+    try {
+        const data = await client.query('SELECT * FROM clients');
+        for (let row of data.rows) {
+            result.push(row);
+        }
+        return result;
+    } catch (error) {
+        console.error('Erreur lors de la récupération des données de la table cadeaux', error.message);
+        result = [];
+        return result;
+    } finally {
+        client.release();
+    }
+}
 
 //middleware
 
@@ -156,6 +172,10 @@ function clearUser(user) {
 
 }
 
+function BirthDate(user) {
+
+}
+
 
 
 
@@ -178,13 +198,15 @@ server.post("/connexion", async (req, res) => {
 
         currentUser["pseudo"] = userData["pseudo"];
         currentUser["mdp"] = userData["mot_de_passe"];
-        currentUser["anniversaire"] = userData["anniversaire"];
         currentUser["points"] = userData["points_client"];
         currentUser["prenom"] = userData["prenom"];
         currentUser["nom"] = userData["nom"];
         currentUser["email"] = userData["email"];
         currentUser["admin"] = userData["admin"];
-        // authentification réussie, redirection de l'utilisateur vers la page d'accueil
+        const date = new Date(userData["anniversaire"]);
+        const formattedDate = date.toISOString().substring(0, 10);
+        currentUser["anniversaire"] = formattedDate;
+        console.log(currentUser["anniversaire"]);
         //enregistré comme connecté avec un cookie
         //res.cookie('monCookie', 'authentifié', { maxAge: 365 * 24 * 60 * 60 * 1000, httpOnly: true }); // maxAge définit la durée de vie du cookie en millisecondes (ici on met 1an)
         console.log(resultat.rows);
@@ -229,13 +251,16 @@ server.get("/index", estConnecté, async (req, res) => {
 
     if (currentUser["admin"]) {
         const cadeaux = await getCadeaux();
-        res.render("index", { sessionStart: sessionStart, currentUser: currentUser, cadeaux: cadeaux }); //rend la vue index avec le tableau cadeaux
+        const everyClient = await getEveryClient();
+        res.render("index", { everyClient: everyClient, sessionStart: sessionStart, currentUser: currentUser, cadeaux: cadeaux }); //rend la vue index avec le tableau cadeaux
     } else {
         const cadeaux = await getMesCadeaux();
         res.render("index", { sessionStart: sessionStart, currentUser: currentUser, cadeaux: cadeaux }); //rend la vue index avec le tableau cadeaux
 
     }
 });
+
+
 
 // route finale : l'argument next est ici ignoré
 server.use((req, res) => {

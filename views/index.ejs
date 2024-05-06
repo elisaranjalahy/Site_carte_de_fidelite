@@ -14,6 +14,11 @@
     <!--CSS-->
     <link href="/style/index.css" rel="stylesheet">
 
+
+    <!--JS-->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="scripts/indexScript.js"></script>
+
 </head>
 
 <body>
@@ -26,20 +31,34 @@
                 location.reload(); //rafraichit après avoir fermé la page => ramene à la page de connexion
             }, 300);
         </script>
+
         <% } %>
+
+
             <!--FIN DES MESSAGES D'ALERTE-->
 
 
+
+
+            <!--Banniere-->
             <div class="container-fluid">
                 <div class="head">
                     <div
                         class="container-fluid d-flex flex-column flex-md-row justify-content-md-between align-items-md-center">
                         <!-- Section des informations -->
                         <div class="info d-flex align-items-center mb-3 mb-md-0">
-                            <h3 class="pts">pts : <%= currentUser.points %>
-                            </h3>
-                            <h1 class="main-title text-center flex-grow-1 mb-0">RESMU<br>@<%= currentUser.pseudo %>
-                            </h1>
+                            <% if (!currentUser.admin){%>
+                                <h3>
+                                    <span class="pts">Points</span> :
+                                    <span style="font-weight: bold; color: rgb(235, 185, 185);">
+                                        <%= currentUser.points %>
+                                    </span>
+                                </h3>
+
+                                <%}%>
+                                    <h1 class="main-title text-center flex-grow-1 mb-0">RESMU<br>@<%= currentUser.pseudo
+                                            %>
+                                    </h1>
                         </div>
 
                         <!-- Bouton de déconnexion -->
@@ -51,50 +70,128 @@
                     </div>
                 </div>
 
-                <!-- Reste de votre contenu HTML ici -->
-                <div class="row">
-                    <!-- Colonne pour les cadeaux -->
-                    <div class="col-md-6">
-                        <div class="card">
-                            <div class="card-title">Liste des cadeaux :</div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <!-- Boucle pour afficher les cadeaux -->
-                                    <% if(sessionStart){ cadeaux.forEach(function(cadeau, i) { %>
-                                        <div class="col-md-4">
-                                            <ul>
-                                                <li>
-                                                    <h3 class="titre_cadeau">
-                                                        <%=cadeau.nom_cadeau %> :
-                                                    </h3>
-                                                    <p class="point">
-                                                        <%= cadeau.points_cadeau %> pts
-                                                    </p>
-                                                    <img class="imagecadeau" src="<%=cadeau.image_cadeau %>">
-                                                    <div class="btn-container">
-                                                        <!-- Conteneur pour centrer le bouton -->
-                                                        <br>
-                                                        <button class="btn btn-success">Ajouter au panier</button>
-                                                        <br><br>
-                                                        <!-- Bouton "Ajouter au panier" -->
-                                                    </div>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                        <% }); %>
-                                            <%}%>
+                <!--CLIENT-->
+                <% if (!currentUser.admin){%>
+                    <div class="row">
+                        <!-- Colonne pour les cadeaux -->
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-title">Liste des cadeaux :</div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <!-- Boucle pour afficher les cadeaux -->
+                                        <% if(sessionStart){cadeaux.forEach(function(cadeau, i) { %>
+                                            <div class="col-md-4">
+                                                <ul class="blocInfoCadeau">
+                                                    <li class="infoCadeau">
+                                                        <h6 class="titre_cadeau">
+                                                            <%=cadeau.nom_cadeau %> :
+                                                                </h3>
+                                                                <p
+                                                                    style="font-weight: bold; color: rgb(235, 185, 185);">
+                                                                    <%= cadeau.points_cadeau %> pts
+                                                                </p>
+                                                                <div class="image-container">
+                                                                    <img class="imagecadeau"
+                                                                        src="<%=cadeau.image_cadeau %>">
+
+                                                                </div>
+                                                                <div class="btn-container">
+                                                                    <!-- Conteneur pour centrer le bouton -->
+                                                                    <br>
+                                                                    <button class="btn btn-success">Ajouter au
+                                                                        panier</button>
+                                                                    <br><br>
+                                                                    <!-- Bouton "Ajouter au panier" -->
+                                                                </div>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <% }); %>
+                                                <%}%>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <!-- Colonne pour la panier (vide pour l'instant) -->
-                    <div class="col-md-6">
-                        <div class="card">
-                            <div class="card-title">Panier :</div>
+
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-title">Panier :</div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
+                    <%}else{%>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-title">Clients</div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <% if(currentUser.admin){ everyClient.forEach(function(client, i) { %>
+                                            <div class="col-md-4">
+                                                <ul class="blocInfoClient">
+                                                    <li class="infoClient">
+                                                        <h3 class="titres_client">
+                                                            @<%=client.pseudo %> :
+                                                        </h3>
+                                                        <div class="button-container">
+                                                            <button class="boutonAfficher<%= i %>"
+                                                                etat="fermer">Afficher
+                                                                informations</button>
+                                                        </div>
+
+                                                        <ul class="paragrapheCache<%= i %>"
+                                                            style="display: none; line-height: 1; font-size: 14px;">
+                                                            <br>
+                                                            <li style="margin-bottom: 5px;">
+                                                                <span class="titres_client">Nom</span> :
+                                                                <%=client.nom %>
+                                                            </li>
+
+
+                                                            <li style="margin-bottom: 5px;">
+                                                                <span class="titres_client">Prénom</span> :
+                                                                <%=client.prenom %>
+                                                            </li>
+                                                            <li style="margin-bottom: 5px;">
+                                                                <span class="titres_client">Email</span> :
+                                                                <%=client.email %>
+                                                            </li>
+                                                            <li style="margin-bottom: 5px;">
+                                                                <span class="titres_client">Points</span> :
+                                                                <%=client.points_client %>
+                                                            </li>
+                                                            <li style="margin-bottom: 5px;">
+                                                                <span class="titres_client">Anniversaire</span> :
+                                                                <%=client.anniversaire %>
+                                                            </li>
+
+
+                                                        </ul>
+
+
+
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <% }); %>
+                                                <%}%>
+
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+                            <div class="row justify-content-end">
+                                <div class="col-md-6">
+                                    <!-- Contenu de la colonne -->
+                                </div>
+                            </div>
+
+
+                            <%}%>
+
+                        </div>
 
 </body>
 
