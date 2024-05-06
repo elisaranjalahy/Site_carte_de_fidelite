@@ -70,6 +70,7 @@
                     </div>
                 </div>
 
+
                 <!--CLIENT-->
                 <% if (!currentUser.admin){%>
                     <div class="row">
@@ -117,6 +118,63 @@
                         <div class="col-md-6">
                             <div class="card">
                                 <div class="card-title">Panier :</div>
+
+               
+                <div class="row">
+                    <!-- Colonne pour les cadeaux -->
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-title">Liste des cadeaux :</div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <!-- Boucle pour afficher les cadeaux -->
+                                    <% if(sessionStart){ cadeaux.forEach(function(cadeau, i) { %>
+                                        <div class="col-md-4">
+                                            <ul>
+                                                <li>
+                                                    <h3 class="titre_cadeau">
+                                                        <%=cadeau.nom_cadeau %> :
+                                                    </h3>
+                                                    <p class="point">
+                                                        <%= cadeau.points_cadeau %> pts
+                                                    </p>
+                                                    <img class="imagecadeau" src="<%=cadeau.image_cadeau %>">
+                                                    <div class="btn-container">
+                                                        <!-- Conteneur pour centrer le bouton -->
+                                                        <br>
+                                                        <form action="/ajouter-au-panier" method="POST">
+                                                            <input type="hidden" name="id_cadeau" value="<%= cadeau.id_cadeau %>">
+                                                            <input type="hidden" name="nom_cadeau" value="<%= cadeau.nom_cadeau %>">
+                                                            <input type="hidden" name="points_cadeau" value="<%= cadeau.points_cadeau %>">
+                                                            <button type="submit" class="btn btn-success">Ajouter au panier</button>
+                                                        </form>
+                                                        
+                                                        <br><br>
+                                                        <!-- Bouton "Ajouter au panier" -->
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <% }); %>
+                                            <%}%>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Colonne pour la panier (vide pour l'instant) -->
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-title">Panier :</div>
+                            <div class="card-body">
+                                <% if (panier.length > 0) { %>
+                                    <ul>
+                                        <% panier.forEach(function(item) { %>
+                                            <li><%= item.nom_cadeau %> - <%= item.points_cadeau %> points</li>
+                                        <% }); %>
+                                    </ul>
+                                <% } else { %>
+                                    <p>Votre panier est vide.</p>
+                                <% } %>
                             </div>
                         </div>
                     </div>

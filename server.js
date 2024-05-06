@@ -1,5 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const session = require("express-session");
 
 const server = express();
 const port = 8080;
@@ -8,6 +9,12 @@ const path = require("path");
 server.set("view engine", "ejs");
 server.set("views", path.join(__dirname, "views"));
 server.use(express.static(path.join(__dirname, "public")));
+
+server.use(session({
+    secret: "secret_key", // Clé secrète pour signer la session
+    resave: false,
+    saveUninitialized: true
+}));
 
 // bodyParser permet d'analyser les données du corps des requêtes
 server.use(bodyParser.urlencoded({ extended: true }));
@@ -41,7 +48,8 @@ const currentUser = {
     mdp: "",
     points: 0,
     anniversaire: "",
-    admin: false
+    admin: false,
+    id: 0
 };
 
 
@@ -102,6 +110,7 @@ async function getMesCadeaux() {
     }
 }
 
+<<<<<<< HEAD
 async function getEveryClient() {
     const client = await pool.connect(); // Se connecte à la base de données
     let result = [];
@@ -115,6 +124,35 @@ async function getEveryClient() {
         console.error('Erreur lors de la récupération des données de la table cadeaux', error.message);
         result = [];
         return result;
+=======
+async function getPanierUtilisateur(idUtilisateur) {
+    const client = await pool.connect();
+    try {
+        const queryResult = await client.query(`
+            SELECT p.id_cadeau, p.quantite, c.nom_cadeau, c.points_cadeau
+            FROM panier p
+            INNER JOIN cadeaux c ON p.id_cadeau = c.id_cadeau
+            WHERE id_utilisateur = $1
+        `, [idUtilisateur]);
+        return queryResult.rows;
+    } catch (error) {
+        console.error('Erreur lors de la récupération du contenu du panier de l\'utilisateur :', error.message);
+        return [];
+    } finally {
+        client.release();
+    }
+}
+
+// Fonction pour récupérer les détails du cadeau à partir de l'ID du cadeau
+async function getCadeauById(idCadeau) {
+    const client = await pool.connect(); // Se connecte à la base de données
+    try {
+        const result = await client.query('SELECT * FROM cadeaux WHERE id_cadeau = $1', [idCadeau]);
+        return result.rows[0]; // Renvoie la première ligne de résultats
+    } catch (error) {
+        console.error('Erreur lors de la récupération des détails du cadeau :', error.message);
+        return null;
+>>>>>>> 291ffcd832fd091368f041b6a040b33eddcc719e
     } finally {
         client.release();
     }
@@ -132,7 +170,8 @@ function estConnecté(req, res, next) {
             //res.clearCookie('monCookie'); //déconnecte l'user
             clearUser(currentUser);
             sessionStart = false;
-            res.render(pageActuelle, { sessionStart: false, currentUser: currentUser, erreur: "" }); //rend la vue index avec le tableau cadeaux
+            let panier = req.session.panier || [];
+            res.render(pageActuelle, { sessionStart: false, currentUser: currentUser, panier: panier, erreur: "" }); //rend la vue index avec le tableau cadeaux
         } else {
             next();
         }
@@ -169,6 +208,7 @@ function clearUser(user) {
     user["nom"] = "";
     user["email"] = "";
     user["admin"] = false;
+    user["id"] = 0;
 
 }
 
@@ -203,10 +243,15 @@ server.post("/connexion", async (req, res) => {
         currentUser["nom"] = userData["nom"];
         currentUser["email"] = userData["email"];
         currentUser["admin"] = userData["admin"];
+
         const date = new Date(userData["anniversaire"]);
         const formattedDate = date.toISOString().substring(0, 10);
         currentUser["anniversaire"] = formattedDate;
         console.log(currentUser["anniversaire"]);
+
+        currentUser["id"] = userData["id"];
+        // authentification réussie, redirection de l'utilisateur vers la page d'accueil
+
         //enregistré comme connecté avec un cookie
         //res.cookie('monCookie', 'authentifié', { maxAge: 365 * 24 * 60 * 60 * 1000, httpOnly: true }); // maxAge définit la durée de vie du cookie en millisecondes (ici on met 1an)
         console.log(resultat.rows);
@@ -223,6 +268,32 @@ server.post("/deconnexion", async (req, res) => {
 
     res.redirect("/connexion");
 });
+
+//route pour l'ajout au panier
+server.post("/ajouter-au-panier", async (req, res) => {
+    const idCadeau = req.body.id_cadeau;
+
+    // Récupérer l'ID de l'utilisateur depuis la session
+    const idUtilisateur = currentUser.id; // Utilisez l'ID de l'utilisateur actuel
+
+    // Ajouter le cadeau au panier de la base de données
+    const client = await pool.connect();
+    try {
+        await client.query("INSERT INTO panier (id_utilisateur, id_cadeau, quantite) VALUES ($1, $2, $3)", [idUtilisateur, idCadeau, 1]);
+        console.log("Cadeau ajouté au panier de la base de données avec succès.");
+    } catch (error) {
+        console.error("Erreur lors de l'ajout du cadeau au panier de la base de données:", error);
+    } finally {
+        client.release();
+    }
+
+    res.redirect("/index"); // Rediriger vers la page d'accueil
+});
+
+
+
+
+
 
 //premiere page affichée au lancement du serveu: page de connexion
 server.get("/", (req, res) => {
@@ -245,18 +316,21 @@ server.get("/connexion", estConnecté, (req, res) => {
 
 });
 
-//page d'accueil,  le site en général
+// page d'accueil,  le site en général
 server.get("/index", estConnecté, async (req, res) => {
     pageActuelle = "index";
-
-    if (currentUser["admin"]) {
+    const idUtilisateur = currentUser.id;
+    const panier = await getPanierUtilisateur(idUtilisateur); // Récupérez le panier de l'utilisateur avec les détails des cadeaux
+    if (currentUser.admin) {
         const cadeaux = await getCadeaux();
+
         const everyClient = await getEveryClient();
         res.render("index", { everyClient: everyClient, sessionStart: sessionStart, currentUser: currentUser, cadeaux: cadeaux }); //rend la vue index avec le tableau cadeaux
+        res.render("index", { sessionStart: sessionStart, currentUser: currentUser, cadeaux: cadeaux, panier: panier }); // Rend la vue index avec le tableau de cadeaux et le panier de l'utilisateur
+
     } else {
         const cadeaux = await getMesCadeaux();
-        res.render("index", { sessionStart: sessionStart, currentUser: currentUser, cadeaux: cadeaux }); //rend la vue index avec le tableau cadeaux
-
+        res.render("index", { sessionStart: sessionStart, currentUser: currentUser, cadeaux: cadeaux, panier: panier }); // Rend la vue index avec le tableau de cadeaux et le panier de l'utilisateur
     }
 });
 
