@@ -248,14 +248,10 @@ server.post("/ajouter-au-panier", async (req, res) => {
 
     // Récupérer l'ID de l'utilisateur depuis la session
     const idUtilisateur = currentUser.id; // Utilisez l'ID de l'utilisateur actuel
-    const cadeau = await getCadeauById(idCadeau);
-    const nomCadeau = cadeau.nom;
-    const pointsCadeau = cadeau.points; 
-
     // Ajouter le cadeau au panier de la session de l'utilisateur
-    let panier = req.session.panier || []; // Récupérez le panier de la session
+    /*let panier = req.session.panier || []; // Récupérez le panier de la session
     panier.push({ id: idCadeau, nom: nomCadeau, points: pointsCadeau });
-    req.session.panier = panier; // Mettez à jour le panier dans la session
+    req.session.panier = panier; // Mettez à jour le panier dans la session*/
 
     // Ajouter le cadeau au panier de la base de données
     const client = await pool.connect();
