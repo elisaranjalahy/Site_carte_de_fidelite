@@ -110,7 +110,7 @@ async function getMesCadeaux() {
     }
 }
 
-<<<<<<< HEAD
+
 async function getEveryClient() {
     const client = await pool.connect(); // Se connecte à la base de données
     let result = [];
@@ -124,7 +124,9 @@ async function getEveryClient() {
         console.error('Erreur lors de la récupération des données de la table cadeaux', error.message);
         result = [];
         return result;
-=======
+    }
+}
+
 async function getPanierUtilisateur(idUtilisateur) {
     const client = await pool.connect();
     try {
@@ -152,7 +154,6 @@ async function getCadeauById(idCadeau) {
     } catch (error) {
         console.error('Erreur lors de la récupération des détails du cadeau :', error.message);
         return null;
->>>>>>> 291ffcd832fd091368f041b6a040b33eddcc719e
     } finally {
         client.release();
     }
