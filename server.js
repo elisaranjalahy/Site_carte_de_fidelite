@@ -154,7 +154,8 @@ function estConnecté(req, res, next) {
             //res.clearCookie('monCookie'); //déconnecte l'user
             clearUser(currentUser);
             sessionStart = false;
-            res.render(pageActuelle, { sessionStart: false, currentUser: currentUser, erreur: "" }); //rend la vue index avec le tableau cadeaux
+            let panier = req.session.panier || []; 
+            res.render(pageActuelle, { sessionStart: false, currentUser: currentUser, panier:panier , erreur: "" }); //rend la vue index avec le tableau cadeaux
         } else {
             next();
         }
