@@ -248,10 +248,6 @@ server.post("/ajouter-au-panier", async (req, res) => {
 
     // Récupérer l'ID de l'utilisateur depuis la session
     const idUtilisateur = currentUser.id; // Utilisez l'ID de l'utilisateur actuel
-    // Ajouter le cadeau au panier de la session de l'utilisateur
-    /*let panier = req.session.panier || []; // Récupérez le panier de la session
-    panier.push({ id: idCadeau, nom: nomCadeau, points: pointsCadeau });
-    req.session.panier = panier; // Mettez à jour le panier dans la session*/
 
     // Ajouter le cadeau au panier de la base de données
     const client = await pool.connect();
@@ -309,9 +305,6 @@ server.get("/index", estConnecté, async (req, res) => {
 
 // route finale : l'argument next est ici ignoré
 server.use((req, res) => {
-    /*if (!req.session.panier) {
-        req.session.panier = []; // Initialiser le panier s'il n'existe pas
-    }*/
     // gestion des requêtes non attendues
     res.status(404).send("Page not found");
 });
