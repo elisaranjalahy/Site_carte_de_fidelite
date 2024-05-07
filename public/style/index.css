@@ -58,7 +58,10 @@ body {
     padding: 45px;
 }
 
-
+p{
+    font-weight: bold;
+    text-align: center;
+}
 
 ul {
     list-style-type: none;

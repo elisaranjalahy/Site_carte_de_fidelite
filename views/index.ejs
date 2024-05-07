@@ -127,9 +127,10 @@
                             <div class="card-title">Panier :</div>
                             <div class="card-body">
                                 <% if (panier.length> 0) { %>
+                                    <p>Total du panier : <%= totalPanier %> points</p>
                                     <ul>
                                         <% panier.forEach(function(item) { %>
-                                            <li><%= item.quantite %><%= item.nom_cadeau %> - <%= item.points_cadeau %> points</li>
+                                            <li><%= item.quantite %> X <%= item.nom_cadeau %> - <%= item.points_cadeau %> points</li>
                                         <% }); %>
                                     </ul>
                                     <% } else { %>

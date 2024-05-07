@@ -179,13 +179,13 @@ async function getCadeauById(idCadeau) {
     }
 }
 
-function trouverCadeauDansPanier(panierUtilisateur, idCadeau) {
-    for (let i = 0; i < panierUtilisateur.length; i++) {
-        if (panierUtilisateur[i].id_cadeau === idCadeau) {
-            return panierUtilisateur[i];
-        }
-    }
-    return null; // Retourne null si le cadeau n'est pas trouvé dans le panier
+async function calculerTotalPanier(idUtilisateur) {
+    const panierUtilisateur = await getPanierUtilisateur(idUtilisateur);
+    let total = 0;
+    panierUtilisateur.forEach(cadeau => {
+        total += cadeau.points_cadeau * cadeau.quantite;
+    });
+    return total;
 }
 
 //middleware
@@ -370,15 +370,16 @@ server.get("/index", estConnecté, async (req, res) => {
 
     const idUtilisateur = currentUser.id;
     const panier = await getPanierUtilisateur(idUtilisateur); // Récupérez le panier de l'utilisateur avec les détails des cadeaux
+    const totalPanier = await calculerTotalPanier(idUtilisateur);
     if (currentUser.admin) {
         const cadeaux = await getCadeaux();
         const everyClient = await getEveryClient();
         pageActuelle = "admin";
-        res.render("admin", { everyClient: everyClient, sessionStart: sessionStart, currentUser: currentUser, cadeaux: cadeaux, panier: panier }); // Rend la vue index avec le tableau de cadeaux et le panier de l'utilisateur
+        res.render("admin", { everyClient: everyClient, sessionStart: sessionStart, currentUser: currentUser, cadeaux: cadeaux, panier: panier, totalPanier: totalPanier }); // Rend la vue index avec le tableau de cadeaux et le panier de l'utilisateur
     } else {
         pageActuelle = "index";
         const cadeaux = await getMesCadeaux();
-        res.render("index", { sessionStart: sessionStart, currentUser: currentUser, cadeaux: cadeaux, panier: panier }); // Rend la vue index avec le tableau de cadeaux et le panier de l'utilisateur
+        res.render("index", { sessionStart: sessionStart, currentUser: currentUser, cadeaux: cadeaux, panier: panier, totalPanier: totalPanier }); // Rend la vue index avec le tableau de cadeaux et le panier de l'utilisateur
     }
 });
 
