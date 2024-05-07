@@ -101,7 +101,7 @@
                                 <% if (panier.length > 0) { %>
                                     <ul>
                                         <% panier.forEach(function(item) { %>
-                                            <li><%= item.nom_cadeau %> - <%= item.points_cadeau %> points</li>
+                                            <li><%= item.quantite %><%= item.nom_cadeau %> - <%= item.points_cadeau %> points</li>
                                         <% }); %>
                                     </ul>
                                 <% } else { %>

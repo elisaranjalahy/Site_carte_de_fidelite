@@ -142,6 +142,15 @@ async function getCadeauById(idCadeau) {
     }
 }
 
+function trouverCadeauDansPanier(panierUtilisateur, idCadeau) {
+    for (let i = 0; i < panierUtilisateur.length; i++) {
+        if (panierUtilisateur[i].id_cadeau === idCadeau) {
+            return panierUtilisateur[i];
+        }
+    }
+    return null; // Retourne null si le cadeau n'est pas trouvé dans le panier
+}
+
 //middleware
 
 //middleware pour gerer l'accessibilité au routes
@@ -245,24 +254,51 @@ server.post("/deconnexion", async (req, res) => {
 
 //route pour l'ajout au panier
 server.post("/ajouter-au-panier", async (req, res) => {
-    const idCadeau = req.body.id_cadeau;
+    const idCadeau = req.body.id_cadeau.toString();
+    const idCadeauI=req.body.id_cadeau;
 
     // Récupérer l'ID de l'utilisateur depuis la session
     const idUtilisateur = currentUser.id; // Utilisez l'ID de l'utilisateur actuel
 
-    // Ajouter le cadeau au panier de la base de données
-    const client = await pool.connect();
-    try {
-        await client.query("INSERT INTO panier (id_utilisateur, id_cadeau, quantite) VALUES ($1, $2, $3)", [idUtilisateur, idCadeau, 1]);
-        console.log("Cadeau ajouté au panier de la base de données avec succès.");
-    } catch (error) {
-        console.error("Erreur lors de l'ajout du cadeau au panier de la base de données:", error);
-    } finally {
-        client.release();
+    // Vérifier si le cadeau est déjà dans le panier de l'utilisateur
+    const panierUtilisateur = await getPanierUtilisateur(idUtilisateur);
+
+    const cadeauExistant = panierUtilisateur.find(cadeau => cadeau.id_cadeau.toString() === idCadeau); // Convertir en chaîne de caractères
+
+    //pour vérifier le stock du cadeau
+    if (cadeauExistant) {
+        // Si le cadeau est déjà dans le panier, mettre à jour la quantité
+        const nouvelleQuantite = cadeauExistant.quantite + 1;
+        const cad=await getCadeauById(idCadeauI);
+        if(nouvelleQuantite>cad.stock){
+            console.log("Pas assez de stock pour : ",cadeauExistant.nom_cadeau);
+        }else {
+        const client = await pool.connect();
+        try {
+            await client.query("UPDATE panier SET quantite = $1 WHERE id_utilisateur = $2 AND id_cadeau = $3", [nouvelleQuantite, idUtilisateur, idCadeau]);
+            console.log("Quantité du cadeau mise à jour avec succès dans le panier.");
+        } catch (error) {
+            console.error("Erreur lors de la mise à jour de la quantité du cadeau dans le panier :", error);
+        } finally {
+            client.release();
+        }
+        }
+    } else {
+        // Si le cadeau n'est pas dans le panier, l'ajouter avec une quantité de 1
+        const client = await pool.connect();
+        try {
+            await client.query("INSERT INTO panier (id_utilisateur, id_cadeau, quantite) VALUES ($1, $2, $3)", [idUtilisateur, idCadeau, 1]);
+            console.log("Cadeau ajouté au panier de la base de données avec succès.");
+        } catch (error) {
+            console.error("Erreur lors de l'ajout du cadeau au panier de la base de données :", error);
+        } finally {
+            client.release();
+        }
     }
 
     res.redirect("/index"); // Rediriger vers la page d'accueil
 });
+
 
 
 

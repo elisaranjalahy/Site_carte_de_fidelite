@@ -18,7 +18,8 @@ CREATE TABLE CADEAUX (
     ID_CADEAU SERIAL PRIMARY KEY,
     NOM_CADEAU TEXT,
     POINTS_CADEAU INTEGER,
-    IMAGE_CADEAU TEXT
+    IMAGE_CADEAU TEXT,
+    STOCK INTEGER
 );
 
 
@@ -66,79 +67,95 @@ INSERT INTO CLIENTS (
 INSERT INTO CADEAUX (
     NOM_CADEAU,
     POINTS_CADEAU,
-    IMAGE_CADEAU
+    IMAGE_CADEAU,
+    STOCK
 ) VALUES (
     'Lot de 2 Mousquetons',
     5,
-    '/images/image1.jpeg'
+    '/images/image1.jpeg',
+    5
 ),
 (
     'Une séance bloc avec François Civil',
     350,
-    '/images/image2.jpeg'
+    '/images/image2.jpeg',
+    5
 ),
 (
     'Chaussons Scarpa',
     1000,
-    '/images/image3.jpeg'
+    '/images/image3.jpeg',
+    5
 ),
 (
     'Brosse à prise',
     15,
-    '/images/image4.jpeg'
+    '/images/image4.jpeg',
+    5
 ),
 (
     'Carte de 10 entrée à Climb Up',
     600,
-    '/images/image5.jpeg'
+    '/images/image5.jpeg',
+    5
 ),
 (
     'Crashpad SNAP',
     250,
-    '/images/image6.jpeg'
+    '/images/image6.jpeg',
+    5
 ),
 (
     'Magnésie Liquide SNAP',
     20,
-    '/images/image7.jpeg'
+    '/images/image7.jpeg',
+    5
 ),
 (
     'Magnésie en poudre',
     20,
-    '/images/image8.jpeg'
+    '/images/image8.jpeg',
+    5
 ),
 (
     'Sac à magnésie ARCTERYX',
     150,
-    '/images/image9.jpeg'
+    '/images/image9.jpeg',
+    5
 ),
 (
     'Lot de 4 Strap',
     15,
-    '/images/image10.jpeg'
+    '/images/image10.jpeg',
+    5
 ),
 (
     'T-shirt Patagonia Bleu Marine',
     25,
-    '/images/image11.jpeg'
+    '/images/image11.jpeg',
+    5
 ),
 (
     'Box de 10 prises avec vis',
     40,
-    '/images/image12.jpeg'
+    '/images/image12.jpeg',
+    5
 ),
 (
     'Poutre',
     120,
-    '/images/image13.jpeg'
+    '/images/image13.jpeg',
+    5
 ),
 (
     'Ecouteurs Bluetooth',
     300,
-    '/images/image14.jpeg'
+    '/images/image14.jpeg',
+    5
 ),
 (
     'Lot de 8 chouchous',
     10,
-    '/images/image15.jpeg'
+    '/images/image15.jpeg',
+    5
 );
