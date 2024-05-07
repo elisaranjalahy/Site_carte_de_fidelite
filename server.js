@@ -218,7 +218,18 @@ async function viderPanierUtilisateur(idUtilisateur) {
 }
 
 
-
+async function supprimerCadeauPanierUtilisateur(idUtilisateur, idCadeauASupprimer) {
+    const client = await pool.connect(); // Se connecte à la base de données
+    try {
+        await client.query('DELETE FROM panier WHERE id_utilisateur = $1 AND id_cadeau = $2', [idUtilisateur, idCadeauASupprimer]);
+        console.log("Cadeau du panier de l'utilisateur supprimé avec succès.");
+    } catch (error) {
+        console.error('Erreur lors de la suppression du cadeau du panier de l\'utilisateur :', error.message);
+        throw error; // Lève l'erreur pour la traiter à un niveau supérieur
+    } finally {
+        client.release();
+    }
+}
 
 //middleware
 
@@ -392,7 +403,20 @@ server.post("/valider-panier", async (req, res) => {
 
 server.post("/supprimer-panier", async (req, res) => {
 
-    res.redirect("/index");
+    try {
+        // Récupérer l'ID de l'utilisateur depuis la session
+        const idUtilisateur = currentUser.id;
+
+        // Récupérer l'ID du cadeau à supprimer depuis les données de la requête
+        const idCadeauASupprimer = req.body.id_cadeau;
+
+        // Supprimer le cadeau du panier de l'utilisateur dans la base de données
+        await supprimerCadeauPanierUtilisateur(idUtilisateur, idCadeauASupprimer);
+        res.redirect("/index");
+    } catch (error) {
+        console.error('Erreur lors de la suppression du cadeau du panier :', error.message);
+        res.redirect("/index");
+    }
 });
 
 //premiere page affichée au lancement du serveu: page de connexion
