@@ -340,7 +340,10 @@ server.post("/ajouter-au-panier", async (req, res) => {
 
 
 
+server.post("/valider-panier", async (req, res) => {
 
+    res.redirect("/index");
+});
 
 
 
