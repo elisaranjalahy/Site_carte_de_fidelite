@@ -23,6 +23,7 @@ server.use(bodyParser.urlencoded({ extended: true }));
 //creation de la pool
 const pg = require("pg");
 const { removeData } = require("jquery");
+const { cursorTo } = require("readline");
 const pool = new pg.Pool({
     host: "localhost",
     database: "my_database",
@@ -188,6 +189,37 @@ async function calculerTotalPanier(idUtilisateur) {
     return total;
 }
 
+
+async function mettreAJourPointsUtilisateur(idUtilisateur, nouveauxPoints) {
+    const client = await pool.connect(); // Se connecte à la base de données
+    try {
+        await client.query('UPDATE clients SET points_client = $1 WHERE id = $2', [nouveauxPoints, idUtilisateur]);
+        console.log("Points de l'utilisateur mis à jour avec succès.");
+        currentUser.points=nouveauxPoints;
+    } catch (error) {
+        console.error('Erreur lors de la mise à jour des points de l\'utilisateur :', error.message);
+        throw error; // Lève l'erreur pour la traiter à un niveau supérieur
+    } finally {
+        client.release();
+    }
+}
+
+async function viderPanierUtilisateur(idUtilisateur) {
+    const client = await pool.connect(); // Se connecte à la base de données
+    try {
+        await client.query('DELETE FROM panier WHERE id_utilisateur = $1', [idUtilisateur]);
+        console.log("Panier de l'utilisateur vidé avec succès.");
+    } catch (error) {
+        console.error('Erreur lors de la suppression des éléments du panier de l\'utilisateur :', error.message);
+        throw error; // Lève l'erreur pour la traiter à un niveau supérieur
+    } finally {
+        client.release();
+    }
+}
+
+
+
+
 //middleware
 
 //middleware pour gerer l'accessibilité au routes
@@ -341,8 +373,21 @@ server.post("/ajouter-au-panier", async (req, res) => {
 
 
 server.post("/valider-panier", async (req, res) => {
+    const idUtilisateur = currentUser.id; 
+    const totalPanier = await calculerTotalPanier(idUtilisateur);
+    if (currentUser.points >= totalPanier) {
+        // Déduire les points du total des points de l'utilisateur
+        const nouveauxPoints = currentUser.points - totalPanier;
+        await mettreAJourPointsUtilisateur(idUtilisateur, nouveauxPoints);
 
-    res.redirect("/index");
+        // Vider le panier de l'utilisateur
+        await viderPanierUtilisateur(idUtilisateur);
+        res.redirect("/index");
+    } else {
+        // Afficher un message d'échec
+        console.log("Points insuffisants pour valider le panier." );
+        res.redirect("/index");
+    }
 });
 
 
