@@ -49,7 +49,7 @@ const currentUser = {
     points: 0,
     anniversaire: "",
     admin: false,
-    id:0
+    id: 0
 };
 
 
@@ -71,6 +71,26 @@ async function getUser(pseudo, mdp) {
         client.release();
     }
 }
+
+
+async function getEveryClient() {
+    const client = await pool.connect(); // Se connecte à la base de données
+    let result = [];
+    try {
+        const data = await client.query('SELECT * FROM clients');
+        for (let row of data.rows) {
+            result.push(row);
+        }
+        return result;
+    } catch (error) {
+        console.error('Erreur lors de la récupération des données de la table cadeaux', error.message);
+        result = [];
+        return result;
+    } finally {
+        client.release();
+    }
+}
+
 
 async function getCadeaux() {
     const client = await pool.connect(); // Se connecte à la base de données
@@ -154,8 +174,8 @@ function estConnecté(req, res, next) {
             //res.clearCookie('monCookie'); //déconnecte l'user
             clearUser(currentUser);
             sessionStart = false;
-            let panier = req.session.panier || []; 
-            res.render(pageActuelle, { sessionStart: false, currentUser: currentUser, panier:panier , erreur: "" }); //rend la vue index avec le tableau cadeaux
+            let panier = req.session.panier || [];
+            res.render(pageActuelle, { sessionStart: false, currentUser: currentUser, panier: panier, erreur: "" }); //rend la vue index avec le tableau cadeaux
         } else {
             next();
         }
@@ -192,7 +212,7 @@ function clearUser(user) {
     user["nom"] = "";
     user["email"] = "";
     user["admin"] = false;
-    user["id"]=0;
+    user["id"] = 0;
 
 }
 
@@ -224,7 +244,7 @@ server.post("/connexion", async (req, res) => {
         currentUser["nom"] = userData["nom"];
         currentUser["email"] = userData["email"];
         currentUser["admin"] = userData["admin"];
-        currentUser["id"]=userData["id"];
+        currentUser["id"] = userData["id"];
         // authentification réussie, redirection de l'utilisateur vers la page d'accueil
         //enregistré comme connecté avec un cookie
         //res.cookie('monCookie', 'authentifié', { maxAge: 365 * 24 * 60 * 60 * 1000, httpOnly: true }); // maxAge définit la durée de vie du cookie en millisecondes (ici on met 1an)
@@ -292,13 +312,16 @@ server.get("/connexion", estConnecté, (req, res) => {
 
 // page d'accueil,  le site en général
 server.get("/index", estConnecté, async (req, res) => {
-    pageActuelle = "index";
+
     const idUtilisateur = currentUser.id;
     const panier = await getPanierUtilisateur(idUtilisateur); // Récupérez le panier de l'utilisateur avec les détails des cadeaux
     if (currentUser.admin) {
         const cadeaux = await getCadeaux();
-        res.render("index", { sessionStart: sessionStart, currentUser: currentUser, cadeaux: cadeaux, panier: panier }); // Rend la vue index avec le tableau de cadeaux et le panier de l'utilisateur
+        const everyClient = await getEveryClient();
+        pageActuelle = "admin";
+        res.render("admin", { everyClient: everyClient, sessionStart: sessionStart, currentUser: currentUser, cadeaux: cadeaux, panier: panier }); // Rend la vue index avec le tableau de cadeaux et le panier de l'utilisateur
     } else {
+        pageActuelle = "index";
         const cadeaux = await getMesCadeaux();
         res.render("index", { sessionStart: sessionStart, currentUser: currentUser, cadeaux: cadeaux, panier: panier }); // Rend la vue index avec le tableau de cadeaux et le panier de l'utilisateur
     }
