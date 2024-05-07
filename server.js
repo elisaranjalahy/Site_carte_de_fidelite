@@ -231,6 +231,19 @@ async function supprimerCadeauPanierUtilisateur(idUtilisateur, idCadeauASupprime
     }
 }
 
+async function reduireQuantiteCadeau(idUtilisateur, idCadeauASupprimer) {
+    const client = await pool.connect();
+    try {
+        await client.query('UPDATE panier SET quantite = quantite - 1 WHERE id_utilisateur = $1 AND id_cadeau = $2', [idUtilisateur, idCadeauASupprimer]);
+        console.log("Quantité du cadeau réduite avec succès.");
+    } catch (error) {
+        console.error('Erreur lors de la réduction de la quantité du cadeau dans le panier :', error.message);
+        throw error;
+    } finally {
+        client.release();
+    }
+}
+
 //middleware
 
 //middleware pour gerer l'accessibilité au routes
@@ -402,22 +415,23 @@ server.post("/valider-panier", async (req, res) => {
 });
 
 server.post("/supprimer-panier", async (req, res) => {
-
-    try {
-        // Récupérer l'ID de l'utilisateur depuis la session
         const idUtilisateur = currentUser.id;
 
-        // Récupérer l'ID du cadeau à supprimer depuis les données de la requête
         const idCadeauASupprimer = req.body.id_cadeau;
+        const quantiteCadeau = req.body.quantite; 
 
-        // Supprimer le cadeau du panier de l'utilisateur dans la base de données
-        await supprimerCadeauPanierUtilisateur(idUtilisateur, idCadeauASupprimer);
-        res.redirect("/index");
-    } catch (error) {
-        console.error('Erreur lors de la suppression du cadeau du panier :', error.message);
-        res.redirect("/index");
-    }
+       
+        if (quantiteCadeau > 1) {
+            await reduireQuantiteCadeau(idUtilisateur, idCadeauASupprimer);
+            res.redirect("/index");
+        } else {
+            
+            await supprimerCadeauPanierUtilisateur(idUtilisateur, idCadeauASupprimer);
+            res.redirect("/index");
+        }
 });
+
+
 
 //premiere page affichée au lancement du serveu: page de connexion
 server.get("/", (req, res) => {
