@@ -72,6 +72,26 @@ async function getUser(pseudo, mdp) {
     }
 }
 
+
+async function getEveryClient() {
+    const client = await pool.connect(); // Se connecte à la base de données
+    let result = [];
+    try {
+        const data = await client.query('SELECT * FROM clients');
+        for (let row of data.rows) {
+            result.push(row);
+        }
+        return result;
+    } catch (error) {
+        console.error('Erreur lors de la récupération des données de la table cadeaux', error.message);
+        result = [];
+        return result;
+    } finally {
+        client.release();
+    }
+}
+
+
 async function getCadeaux() {
     const client = await pool.connect(); // Se connecte à la base de données
     let result = [];
@@ -213,9 +233,7 @@ function clearUser(user) {
 
 }
 
-function BirthDate(user) {
 
-}
 
 
 
@@ -244,12 +262,6 @@ server.post("/connexion", async (req, res) => {
         currentUser["nom"] = userData["nom"];
         currentUser["email"] = userData["email"];
         currentUser["admin"] = userData["admin"];
-
-        const date = new Date(userData["anniversaire"]);
-        const formattedDate = date.toISOString().substring(0, 10);
-        currentUser["anniversaire"] = formattedDate;
-        console.log(currentUser["anniversaire"]);
-
         currentUser["id"] = userData["id"];
         // authentification réussie, redirection de l'utilisateur vers la page d'accueil
 
@@ -319,17 +331,16 @@ server.get("/connexion", estConnecté, (req, res) => {
 
 // page d'accueil,  le site en général
 server.get("/index", estConnecté, async (req, res) => {
-    pageActuelle = "index";
+
     const idUtilisateur = currentUser.id;
     const panier = await getPanierUtilisateur(idUtilisateur); // Récupérez le panier de l'utilisateur avec les détails des cadeaux
     if (currentUser.admin) {
         const cadeaux = await getCadeaux();
-
         const everyClient = await getEveryClient();
-        res.render("index", { everyClient: everyClient, sessionStart: sessionStart, currentUser: currentUser, cadeaux: cadeaux }); //rend la vue index avec le tableau cadeaux
-        res.render("index", { sessionStart: sessionStart, currentUser: currentUser, cadeaux: cadeaux, panier: panier }); // Rend la vue index avec le tableau de cadeaux et le panier de l'utilisateur
-
+        pageActuelle = "admin";
+        res.render("admin", { everyClient: everyClient, sessionStart: sessionStart, currentUser: currentUser, cadeaux: cadeaux, panier: panier }); // Rend la vue index avec le tableau de cadeaux et le panier de l'utilisateur
     } else {
+        pageActuelle = "index";
         const cadeaux = await getMesCadeaux();
         res.render("index", { sessionStart: sessionStart, currentUser: currentUser, cadeaux: cadeaux, panier: panier }); // Rend la vue index avec le tableau de cadeaux et le panier de l'utilisateur
     }

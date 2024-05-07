@@ -107,7 +107,6 @@ img {
     border-radius: 5px;
     display: flex;
     flex-direction: column;
-    position: relative;
 }
 
 
@@ -140,13 +139,4 @@ img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-}
-
-.button-container {
-    position: absolute;
-    bottom: 10px;
-    /* Ajustez la position verticale du bouton par rapport au bas du bloc */
-    left: 50%;
-    /* Alignez le bouton horizontalement au centre du bloc */
-    transform: translateX(-50%);
 }
