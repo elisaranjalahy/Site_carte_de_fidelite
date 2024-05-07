@@ -103,6 +103,23 @@ img {
     text-align: center;
 }
 
+/* Style du bouton de suppression */
+.btn-supprimer {
+    background-color: #ff3333; 
+    color: #ffffff; 
+    border: none; 
+    padding: 5px 10px; 
+    border-radius: 5px; 
+    cursor: pointer; 
+    transition: background-color 0.3s;
+    font-size: smaller;
+}
+
+/* Au survol, assombrir légèrement la couleur */
+.btn-supprimer:hover {
+    background-color: #cc0000;
+}
+
 .blocInfoClient {
     min-height: auto;
     background-color: #6b7d7d;

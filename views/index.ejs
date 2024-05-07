@@ -130,7 +130,12 @@
                                     <p>Total du panier : <%= totalPanier %> points</p>
                                     <ul>
                                         <% panier.forEach(function(item) { %>
-                                            <li><%= item.quantite %> X <%= item.nom_cadeau %> - <%= item.points_cadeau %> points</li>
+                                                <form action="/supprimer-panier" method="POST">
+                                                    <%= item.quantite %> X <%= item.nom_cadeau %> - <%= item.points_cadeau %> points
+                                                    <input type="hidden" name="id_cadeau" value="<%= item.id_cadeau %>">
+                                                    <button class="btn-supprimer" type="submit">Supprimer</button>
+                                                </form>
+                                        
                                         <% }); %>
                                     </ul>
                                     <% } else { %>

@@ -390,7 +390,10 @@ server.post("/valider-panier", async (req, res) => {
     }
 });
 
+server.post("/supprimer-panier", async (req, res) => {
 
+    res.redirect("/index");
+});
 
 //premiere page affichée au lancement du serveu: page de connexion
 server.get("/", (req, res) => {
