@@ -83,35 +83,39 @@
                                                     <h6 class="titre_cadeau">
 
                                                         <%=cadeau.nom_cadeau %> :
-                                                            </h3>
-                                                            <p style="font-weight: bold; color: rgb(235, 185, 185);">
+                                                    </h6>
+                                                    <p style="font-weight: bold; color: rgb(235, 185, 185);">
 
-                                                                <%= cadeau.points_cadeau %> pts
-                                                            </p>
-                                                            <div class="image-container">
-                                                                <img class="imagecadeau"
-                                                                    src="<%=cadeau.image_cadeau %>">
+                                                        <%= cadeau.points_cadeau %> pts
+                                                    </p>
+                                                    <div class="image-container">
+                                                        <img class="imagecadeau" src="<%=cadeau.image_cadeau %>">
 
-                                                            </div>
+                                                    </div>
 
-                                                            <div class="btn-container">
-                                                                <!-- Conteneur pour centrer le bouton -->
-                                                                <br>
-                                                                <form action="/ajouter-au-panier" method="POST">
-                                                                    <input type="hidden" name="id_cadeau"
-                                                                        value="<%= cadeau.id_cadeau %>">
-                                                                    <input type="hidden" name="nom_cadeau"
-                                                                        value="<%= cadeau.nom_cadeau %>">
-                                                                    <input type="hidden" name="points_cadeau"
-                                                                        value="<%= cadeau.points_cadeau %>">
-                                                                    <button type="submit"
-                                                                        class="btn btn-success">Ajouter au
-                                                                        panier</button>
-                                                                </form>
+                                                    <div class="btn-container">
+                                                        <!-- Conteneur pour centrer le bouton -->
+                                                        <br>
+                                                        <form action="/ajouter-au-panier" method="POST">
+                                                            <input type="hidden" name="id_cadeau"
+                                                                value="<%= cadeau.id_cadeau %>">
+                                                            <input type="hidden" name="nom_cadeau"
+                                                                value="<%= cadeau.nom_cadeau %>">
+                                                            <input type="hidden" name="points_cadeau"
+                                                                value="<%= cadeau.points_cadeau %>">
 
-                                                                <br><br>
-                                                                <!-- Bouton "Ajouter au panier" -->
-                                                            </div>
+                                                            <input type="number" name="quantite" value="1" min="0"
+                                                                class="quantité">
+                                                            <br>
+                                                            <br>
+
+                                                            <button type="submit" class="btn btn-success">Ajouter au
+                                                                panier</button>
+                                                        </form>
+
+                                                        <br><br>
+                                                        <!-- Bouton "Ajouter au panier" -->
+                                                    </div>
                                                 </li>
                                             </ul>
                                         </div>
@@ -128,28 +132,37 @@
                             <div class="card-body">
                                 <% if (panier.length> 0) { %>
                                     <p>Total du panier : <%= totalPanier %> points</p>
-                                    <ul>
+                                    <ul style="display: flex; flex-direction: column;">
                                         <% panier.forEach(function(item) { %>
-                                                <form action="/supprimer-panier" method="POST">
-                                                    <%= item.quantite %> X <%= item.nom_cadeau %> - <%= item.points_cadeau %> points
-                                                    <input type="hidden" name="quantite" value="<%= item.quantite %>">
-                                                    <input type="hidden" name="id_cadeau" value="<%= item.id_cadeau %>">
-                                                    <button class="btn-supprimer" type="submit">Supprimer</button>
-                                                </form>
-                                        
-                                        <% }); %>
+                                            <li style="display: flex; justify-content: space-between;">
+                                                <br>
+                                                <%= item.nom_cadeau %> - <%= item.points_cadeau %> points | Quantité
+                                                        :
+                                                        <%= item.quantite %>
+                                                            <form action="/supprimer-panier" method="POST">
+
+                                                                <input type="hidden" name="quantite"
+                                                                    value="<%= item.quantite %>">
+                                                                <input type="hidden" name="id_cadeau"
+                                                                    value="<%= item.id_cadeau %>">
+                                                                <button class="btn-supprimer"
+                                                                    type="submit">Supprimer</button>
+                                                            </form>
+                                            </li>
+                                            <% }); %>
                                     </ul>
+
+
                                     <% } else { %>
                                         <p>Votre panier est vide.</p>
                                         <% } %>
-                                        <div class="btn-container">
-                                            <br>
-                                            <form action="/valider-panier" method="POST">
-                                                <button type="submit"
-                                                    class="btn btn-success">Valider le
-                                                    panier</button>
-                                            </form>
-                                        </div>
+                                            <div class="btn-container">
+                                                <br>
+                                                <form action="/valider-panier" method="POST">
+                                                    <button type="submit" class="btn btn-success">Valider le
+                                                        panier</button>
+                                                </form>
+                                            </div>
                             </div>
                         </div>
                     </div>
