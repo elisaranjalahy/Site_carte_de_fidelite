@@ -351,6 +351,7 @@ server.post("/deconnexion", async (req, res) => {
 server.post("/ajouter-au-panier", async (req, res) => {
     const idCadeau = req.body.id_cadeau.toString();
     const idCadeauI=req.body.id_cadeau;
+    const quantite=req.body.quantite;
 
     // Récupérer l'ID de l'utilisateur depuis la session
     const idUtilisateur = currentUser.id; // Utilisez l'ID de l'utilisateur actuel
@@ -363,7 +364,7 @@ server.post("/ajouter-au-panier", async (req, res) => {
     //pour vérifier le stock du cadeau
     if (cadeauExistant) {
         // Si le cadeau est déjà dans le panier, mettre à jour la quantité
-        const nouvelleQuantite = cadeauExistant.quantite + 1;
+        const nouvelleQuantite = parseInt(cadeauExistant.quantite) + parseInt(quantite);
         const cad=await getCadeauById(idCadeauI);
         if(nouvelleQuantite>cad.stock){
             console.log("Pas assez de stock pour : ",cadeauExistant.nom_cadeau);
@@ -382,7 +383,7 @@ server.post("/ajouter-au-panier", async (req, res) => {
         // Si le cadeau n'est pas dans le panier, l'ajouter avec une quantité de 1
         const client = await pool.connect();
         try {
-            await client.query("INSERT INTO panier (id_utilisateur, id_cadeau, quantite) VALUES ($1, $2, $3)", [idUtilisateur, idCadeau, 1]);
+            await client.query("INSERT INTO panier (id_utilisateur, id_cadeau, quantite) VALUES ($1, $2, $3)", [idUtilisateur, idCadeau, quantite]);
             console.log("Cadeau ajouté au panier de la base de données avec succès.");
         } catch (error) {
             console.error("Erreur lors de l'ajout du cadeau au panier de la base de données :", error);
