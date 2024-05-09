@@ -186,3 +186,29 @@ img {
 .btn-container form select option {
     color: darkgray; /* Définir la couleur du texte des options de couleur */
 }
+
+@keyframes confetti {
+  0% { transform: translateY(0) rotate(0deg); }
+  100% { transform: translateY(100vh) rotate(360deg); }
+}
+
+.confetti {
+  width: 10px;
+  height: 10px;
+  background-color: #ff69b4; /* Couleur du confetti */
+  position: absolute;
+  top: -10px;
+  left: calc(100vw * random());
+  animation: confetti 2s linear infinite;
+}
+
+@keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+  
+  .anniversaire-message {
+    animation: blink 1s infinite;
+    color:#6b7d7d;
+  }

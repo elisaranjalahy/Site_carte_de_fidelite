@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const session = require("express-session");
+const moment = require('moment');
 
 const server = express();
 const port = 8080;
@@ -248,15 +249,36 @@ async function renderErrorPage(res, errorMessage) {
     const idUtilisateur = currentUser.id;
     const panier = await getPanierUtilisateur(idUtilisateur); // Récupérez le panier de l'utilisateur avec les détails des cadeaux
     const totalPanier = await calculerTotalPanier(idUtilisateur);
+    const dateAnniversaireUtilisateur = await getAnniv(idUtilisateur);
+    const dateActuelle = moment();
+    const dateAnniversaire = moment(dateAnniversaireUtilisateur);
+    let anniversaireClass=null;
+    if (dateActuelle.isSame(dateAnniversaire, 'day')) {
+        anniversaireClass = "anniversaire";
+    }
     if (currentUser.admin) {
         res.redirect("admin");
     } else {
         pageActuelle = "index";
         const cadeaux = await getMesCadeaux();
-        res.render("index", { sessionStart: sessionStart, currentUser: currentUser, cadeaux: cadeaux, panier: panier, totalPanier: totalPanier , error:errorMessage}); // Rend la vue index avec le tableau de cadeaux et le panier de l'utilisateur
+        res.render("index", { sessionStart: sessionStart, currentUser: currentUser, cadeaux: cadeaux, panier: panier, totalPanier: totalPanier , error:errorMessage, anniversaireClass:anniversaireClass}); // Rend la vue index avec le tableau de cadeaux et le panier de l'utilisateur
     }
 }
 
+
+async function getAnniv(id_utilisateur) {
+    const client = await pool.connect(); // Se connecte à la base de données
+    try {
+        const result = await client.query('SELECT anniversaire FROM clients WHERE id = $1 ', [id_utilisateur]);
+        return result;
+    } catch (error) {
+        console.error('Erreur lors de la récupération de l\'anniv:', error.message);
+        throw error; // Lève l'erreur pour la traiter à un niveau supérieur
+
+    } finally {
+        client.release();
+    }
+}
 //middleware
 
 //middleware pour gerer l'accessibilité au routes
@@ -269,7 +291,8 @@ function estConnecté(req, res, next) {
             sessionStart = false;
             let panier = req.session.panier || [];
             const error=null;
-            res.render(pageActuelle, { sessionStart: false, currentUser: currentUser, panier: panier, error: error }); //rend la vue index avec le tableau cadeaux
+            const anniv=null;
+            res.render(pageActuelle, { sessionStart: false, currentUser: currentUser, panier: panier, error: error , anniversaireClass:anniv}); //rend la vue index avec le tableau cadeaux
         } else {
             next();
         }
@@ -481,13 +504,20 @@ server.get("/index", estConnecté, async (req, res) => {
     const idUtilisateur = currentUser.id;
     const panier = await getPanierUtilisateur(idUtilisateur); // Récupérez le panier de l'utilisateur avec les détails des cadeaux
     const totalPanier = await calculerTotalPanier(idUtilisateur);
+    const dateAnniversaireUtilisateur = await getAnniv(idUtilisateur);
+    const dateActuelle = moment();
+    const dateAnniversaire = moment(dateAnniversaireUtilisateur);
+    let anniversaireClass=null;
+    if (dateActuelle.isSame(dateAnniversaire, 'day')) {
+        anniversaireClass = "anniversaire";
+    }
     if (currentUser.admin) {
         res.redirect("admin");
     } else {
         pageActuelle = "index";
         const cadeaux = await getMesCadeaux();
         const error = null;
-        res.render("index", { sessionStart: sessionStart, currentUser: currentUser, cadeaux: cadeaux, panier: panier, totalPanier: totalPanier , error:error}); // Rend la vue index avec le tableau de cadeaux et le panier de l'utilisateur
+        res.render("index", { sessionStart: sessionStart, currentUser: currentUser, cadeaux: cadeaux, panier: panier, totalPanier: totalPanier , error:error, anniversaireClass:anniversaireClass}); // Rend la vue index avec le tableau de cadeaux et le panier de l'utilisateur
     }
 });
 

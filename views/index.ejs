@@ -42,6 +42,14 @@
                     <%= error %>
                 </div>
             <% } %>
+            
+
+            <% if (anniversaireClass) { %>
+                <% for (let i = 0; i < 50; i++) { %>
+                  <div class="confetti" style="left: <%= Math.random() * 100 %>vw; animation-delay: <%= Math.random() * 5 %>s;"></div>
+                <% } %>
+                <p class="anniversaire-message">C'est votre anniversaire aujourd'hui! Joyeux anniversaire!</p>
+              <% } %>
             <!--Banniere-->
             <div class="container-fluid">
                 <div class="head">
