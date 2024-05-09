@@ -244,6 +244,19 @@ async function reduireQuantiteCadeau(idUtilisateur, idCadeauASupprimer,couleur,t
     }
 }
 
+async function renderErrorPage(res, errorMessage) {
+    const idUtilisateur = currentUser.id;
+    const panier = await getPanierUtilisateur(idUtilisateur); // Récupérez le panier de l'utilisateur avec les détails des cadeaux
+    const totalPanier = await calculerTotalPanier(idUtilisateur);
+    if (currentUser.admin) {
+        res.redirect("admin");
+    } else {
+        pageActuelle = "index";
+        const cadeaux = await getMesCadeaux();
+        res.render("index", { sessionStart: sessionStart, currentUser: currentUser, cadeaux: cadeaux, panier: panier, totalPanier: totalPanier , error:errorMessage}); // Rend la vue index avec le tableau de cadeaux et le panier de l'utilisateur
+    }
+}
+
 //middleware
 
 //middleware pour gerer l'accessibilité au routes
@@ -371,7 +384,8 @@ server.post("/ajouter-au-panier", async (req, res) => {
         const nouvelleQuantite = parseInt(cadeauExistant.quantite) + parseInt(quantite);
         const cad = await getCadeauById(idCadeauI);
         if (nouvelleQuantite > cad.stock) {
-            console.log("Pas assez de stock pour : ", cadeauExistant.nom_cadeau);
+            const error = "Pas assez de stock pour : " + cadeauExistant.nom_cadeau;
+            await renderErrorPage(res, error);
         } else {
             const client = await pool.connect();
             try {
@@ -382,6 +396,7 @@ server.post("/ajouter-au-panier", async (req, res) => {
             } finally {
                 client.release();
             }
+            res.redirect("/index"); // Rediriger vers la page d'accueil
         }
     } else {
         // Si le cadeau n'est pas dans le panier, l'ajouter avec une quantité de 1
@@ -394,9 +409,9 @@ server.post("/ajouter-au-panier", async (req, res) => {
         } finally {
             client.release();
         }
+        res.redirect("/index"); // Rediriger vers la page d'accueil
     }
 
-    res.redirect("/index"); // Rediriger vers la page d'accueil
 });
 
 
@@ -414,8 +429,7 @@ server.post("/valider-panier", async (req, res) => {
         res.redirect("/index");
     } else {
         // Afficher un message d'échec
-        console.log("Points insuffisants pour valider le panier.");
-        res.redirect("/index");
+        await renderErrorPage(res, "Points insuffisants");
     }
 });
 
@@ -463,7 +477,6 @@ server.get("/connexion", estConnecté, (req, res) => {
 
 // page d'accueil,  le site en général
 server.get("/index", estConnecté, async (req, res) => {
-
     const idUtilisateur = currentUser.id;
     const panier = await getPanierUtilisateur(idUtilisateur); // Récupérez le panier de l'utilisateur avec les détails des cadeaux
     const totalPanier = await calculerTotalPanier(idUtilisateur);
@@ -472,7 +485,7 @@ server.get("/index", estConnecté, async (req, res) => {
     } else {
         pageActuelle = "index";
         const cadeaux = await getMesCadeaux();
-        res.render("index", { sessionStart: sessionStart, currentUser: currentUser, cadeaux: cadeaux, panier: panier, totalPanier: totalPanier }); // Rend la vue index avec le tableau de cadeaux et le panier de l'utilisateur
+        res.render("index", { sessionStart: sessionStart, currentUser: currentUser, cadeaux: cadeaux, panier: panier, totalPanier: totalPanier , error:null}); // Rend la vue index avec le tableau de cadeaux et le panier de l'utilisateur
     }
 });
 

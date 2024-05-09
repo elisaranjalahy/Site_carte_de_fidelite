@@ -37,7 +37,11 @@
 
             <!--FIN DES MESSAGES D'ALERTE-->
 
-
+            <% if (error) { %>
+                <div class="alert alert-danger" role="alert">
+                    <%= error %>
+                </div>
+            <% } %>
             <!--Banniere-->
             <div class="container-fluid">
                 <div class="head">
