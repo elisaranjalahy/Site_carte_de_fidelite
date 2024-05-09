@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const session = require("express-session");
+const moment = require('moment');
 
 const server = express();
 const port = 8080;
@@ -152,7 +153,7 @@ async function getPanierUtilisateur(idUtilisateur) {
     const client = await pool.connect();
     try {
         const queryResult = await client.query(`
-            SELECT p.id_cadeau, p.quantite, c.nom_cadeau, c.points_cadeau
+            SELECT p.id_cadeau, p.quantite, c.nom_cadeau, c.points_cadeau, p.couleur, p.taille
             FROM panier p
             INNER JOIN cadeaux c ON p.id_cadeau = c.id_cadeau
             WHERE id_utilisateur = $1
@@ -217,11 +218,10 @@ async function viderPanierUtilisateur(idUtilisateur) {
     }
 }
 
-
-async function supprimerCadeauPanierUtilisateur(idUtilisateur, idCadeauASupprimer) {
+async function supprimerCadeauPanierUtilisateur(idUtilisateur, idCadeauASupprimer, couleur, taille) {
     const client = await pool.connect(); // Se connecte à la base de données
     try {
-        await client.query('DELETE FROM panier WHERE id_utilisateur = $1 AND id_cadeau = $2', [idUtilisateur, idCadeauASupprimer]);
+        await client.query('DELETE FROM panier WHERE id_utilisateur = $1 AND id_cadeau = $2 AND couleur = $3 AND taille = $4', [idUtilisateur, idCadeauASupprimer, couleur, taille]);
         console.log("Cadeau du panier de l'utilisateur supprimé avec succès.");
     } catch (error) {
         console.error('Erreur lors de la suppression du cadeau du panier de l\'utilisateur :', error.message);
@@ -231,10 +231,11 @@ async function supprimerCadeauPanierUtilisateur(idUtilisateur, idCadeauASupprime
     }
 }
 
-async function reduireQuantiteCadeau(idUtilisateur, idCadeauASupprimer) {
+
+async function reduireQuantiteCadeau(idUtilisateur, idCadeauASupprimer, couleur, taille) {
     const client = await pool.connect();
     try {
-        await client.query('UPDATE panier SET quantite = quantite - 1 WHERE id_utilisateur = $1 AND id_cadeau = $2', [idUtilisateur, idCadeauASupprimer]);
+        await client.query('UPDATE panier SET quantite = quantite - 1 WHERE id_utilisateur = $1 AND id_cadeau = $2 AND couleur = $3 AND taille = $4', [idUtilisateur, idCadeauASupprimer, couleur, taille]);
         console.log("Quantité du cadeau réduite avec succès.");
     } catch (error) {
         console.error('Erreur lors de la réduction de la quantité du cadeau dans le panier :', error.message);
@@ -244,6 +245,40 @@ async function reduireQuantiteCadeau(idUtilisateur, idCadeauASupprimer) {
     }
 }
 
+async function renderErrorPage(res, errorMessage) {
+    const idUtilisateur = currentUser.id;
+    const panier = await getPanierUtilisateur(idUtilisateur); // Récupérez le panier de l'utilisateur avec les détails des cadeaux
+    const totalPanier = await calculerTotalPanier(idUtilisateur);
+    const dateAnniversaireUtilisateur = await getAnniv(idUtilisateur);
+    const dateActuelle = moment();
+    const dateAnniversaire = moment(dateAnniversaireUtilisateur);
+    let anniversaireClass = null;
+    if (dateActuelle.isSame(dateAnniversaire, 'day')) {
+        anniversaireClass = "anniversaire";
+    }
+    if (currentUser.admin) {
+        res.redirect("admin");
+    } else {
+        pageActuelle = "index";
+        const cadeaux = await getMesCadeaux();
+        res.render("index", { sessionStart: sessionStart, currentUser: currentUser, cadeaux: cadeaux, panier: panier, totalPanier: totalPanier, error: errorMessage, anniversaireClass: anniversaireClass }); // Rend la vue index avec le tableau de cadeaux et le panier de l'utilisateur
+    }
+}
+
+
+async function getAnniv(id_utilisateur) {
+    const client = await pool.connect(); // Se connecte à la base de données
+    try {
+        const result = await client.query('SELECT anniversaire FROM clients WHERE id = $1 ', [id_utilisateur]);
+        return result;
+    } catch (error) {
+        console.error('Erreur lors de la récupération de l\'anniv:', error.message);
+        throw error; // Lève l'erreur pour la traiter à un niveau supérieur
+
+    } finally {
+        client.release();
+    }
+}
 //middleware
 
 //middleware pour gerer l'accessibilité au routes
@@ -258,9 +293,12 @@ async function estConnecté(req, res, next) {
                 res.render(pageActuelle, { everyClient: everyClient, sessionStart: false, currentUser: currentUser }); //rend la vue index avec le tableau cadeaux
 
             } else {
-                res.render(pageActuelle, { sessionStart: false, currentUser: currentUser, panier: panier, erreur: "" }); //rend la vue index avec le tableau cadeaux
+                const error = null;
+                const anniv = null;
+                res.render(pageActuelle, { sessionStart: false, currentUser: currentUser, panier: panier, error: error, anniversaireClass: anniv }); //rend la vue index avec le tableau cadeaux
             }
             clearUser(currentUser);
+
         } else {
             next();
         }
@@ -359,6 +397,8 @@ server.post("/ajouter-au-panier", async (req, res) => {
     const idCadeau = req.body.id_cadeau.toString();
     const idCadeauI = req.body.id_cadeau;
     const quantite = req.body.quantite;
+    const couleur = req.body.couleur;
+    const taille = req.body.taille;
 
     // Récupérer l'ID de l'utilisateur depuis la session
     const idUtilisateur = currentUser.id; // Utilisez l'ID de l'utilisateur actuel
@@ -366,15 +406,16 @@ server.post("/ajouter-au-panier", async (req, res) => {
     // Vérifier si le cadeau est déjà dans le panier de l'utilisateur
     const panierUtilisateur = await getPanierUtilisateur(idUtilisateur);
 
-    const cadeauExistant = panierUtilisateur.find(cadeau => cadeau.id_cadeau.toString() === idCadeau); // Convertir en chaîne de caractères
+    const cadeauExistant = panierUtilisateur.find(cadeau => cadeau.id_cadeau.toString() === idCadeau);
 
     //pour vérifier le stock du cadeau
-    if (cadeauExistant) {
+    if (cadeauExistant && cadeauExistant.couleur.toString() === couleur.toString() && cadeauExistant.taille.toString() === taille.toString()) {
         // Si le cadeau est déjà dans le panier, mettre à jour la quantité
         const nouvelleQuantite = parseInt(cadeauExistant.quantite) + parseInt(quantite);
         const cad = await getCadeauById(idCadeauI);
         if (nouvelleQuantite > cad.stock) {
-            console.log("Pas assez de stock pour : ", cadeauExistant.nom_cadeau);
+            const error = "Pas assez de stock pour : " + cadeauExistant.nom_cadeau;
+            await renderErrorPage(res, error);
         } else {
             const client = await pool.connect();
             try {
@@ -385,21 +426,22 @@ server.post("/ajouter-au-panier", async (req, res) => {
             } finally {
                 client.release();
             }
+            res.redirect("/index"); // Rediriger vers la page d'accueil
         }
     } else {
         // Si le cadeau n'est pas dans le panier, l'ajouter avec une quantité de 1
         const client = await pool.connect();
         try {
-            await client.query("INSERT INTO panier (id_utilisateur, id_cadeau, quantite) VALUES ($1, $2, $3)", [idUtilisateur, idCadeau, quantite]);
+            await client.query("INSERT INTO panier (id_utilisateur, id_cadeau, quantite, couleur, taille) VALUES ($1, $2, $3, $4, $5)", [idUtilisateur, idCadeau, quantite, couleur, taille]);
             console.log("Cadeau ajouté au panier de la base de données avec succès.");
         } catch (error) {
             console.error("Erreur lors de l'ajout du cadeau au panier de la base de données :", error);
         } finally {
             client.release();
         }
+        res.redirect("/index"); // Rediriger vers la page d'accueil
     }
 
-    res.redirect("/index"); // Rediriger vers la page d'accueil
 });
 
 
@@ -417,8 +459,7 @@ server.post("/valider-panier", async (req, res) => {
         res.redirect("/index");
     } else {
         // Afficher un message d'échec
-        console.log("Points insuffisants pour valider le panier.");
-        res.redirect("/index");
+        await renderErrorPage(res, "Points insuffisants");
     }
 });
 
@@ -427,14 +468,16 @@ server.post("/supprimer-panier", async (req, res) => {
 
     const idCadeauASupprimer = req.body.id_cadeau;
     const quantiteCadeau = req.body.quantite;
+    const couleur = req.body.couleur;
+    const taille = req.body.taille;
 
 
     if (quantiteCadeau > 1) {
-        await reduireQuantiteCadeau(idUtilisateur, idCadeauASupprimer);
+        await reduireQuantiteCadeau(idUtilisateur, idCadeauASupprimer, couleur, taille);
         res.redirect("/index");
     } else {
 
-        await supprimerCadeauPanierUtilisateur(idUtilisateur, idCadeauASupprimer);
+        await supprimerCadeauPanierUtilisateur(idUtilisateur, idCadeauASupprimer, couleur, taille);
         res.redirect("/index");
     }
 });
@@ -464,16 +507,23 @@ server.get("/connexion", estConnecté, (req, res) => {
 
 // page d'accueil,  le site en général
 server.get("/index", estConnecté, async (req, res) => {
-
     const idUtilisateur = currentUser.id;
     const panier = await getPanierUtilisateur(idUtilisateur); // Récupérez le panier de l'utilisateur avec les détails des cadeaux
     const totalPanier = await calculerTotalPanier(idUtilisateur);
+    const dateAnniversaireUtilisateur = await getAnniv(idUtilisateur);
+    const dateActuelle = moment();
+    const dateAnniversaire = moment(dateAnniversaireUtilisateur);
+    let anniversaireClass = null;
+    if (dateActuelle.isSame(dateAnniversaire, 'day')) {
+        anniversaireClass = "anniversaire";
+    }
     if (currentUser.admin) {
         res.redirect("/admin");
     } else {
         pageActuelle = "index";
         const cadeaux = await getMesCadeaux();
-        res.render("index", { sessionStart: sessionStart, currentUser: currentUser, cadeaux: cadeaux, panier: panier, totalPanier: totalPanier }); // Rend la vue index avec le tableau de cadeaux et le panier de l'utilisateur
+        const error = null;
+        res.render("index", { sessionStart: sessionStart, currentUser: currentUser, cadeaux: cadeaux, panier: panier, totalPanier: totalPanier, error: error, anniversaireClass: anniversaireClass }); // Rend la vue index avec le tableau de cadeaux et le panier de l'utilisateur
     }
 });
 
