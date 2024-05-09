@@ -247,15 +247,20 @@ async function reduireQuantiteCadeau(idUtilisateur, idCadeauASupprimer) {
 //middleware
 
 //middleware pour gerer l'accessibilité au routes
-function estConnecté(req, res, next) {
+async function estConnecté(req, res, next) {
 
     if (sessionStart) { //connecté
         if (pageActuelle !== "connexion" /*chemin actuek*/ && req.path === "/connexion" /*chemin demandé*/) {
-
-            clearUser(currentUser);
             sessionStart = false;
             let panier = req.session.panier || [];
-            res.render(pageActuelle, { sessionStart: false, currentUser: currentUser, panier: panier, erreur: "" }); //rend la vue index avec le tableau cadeaux
+            if (currentUser.admin) {
+                const everyClient = await getEveryClient();
+                res.render(pageActuelle, { everyClient: everyClient, sessionStart: false, currentUser: currentUser }); //rend la vue index avec le tableau cadeaux
+
+            } else {
+                res.render(pageActuelle, { sessionStart: false, currentUser: currentUser, panier: panier, erreur: "" }); //rend la vue index avec le tableau cadeaux
+            }
+            clearUser(currentUser);
         } else {
             next();
         }
@@ -344,7 +349,7 @@ server.post("/connexion", async (req, res) => {
 
 });
 
-server.post("/deconnexion", async (req, res) => {
+server.post("/deconnexion", (req, res) => {
 
     res.redirect("/connexion");
 });
@@ -464,7 +469,7 @@ server.get("/index", estConnecté, async (req, res) => {
     const panier = await getPanierUtilisateur(idUtilisateur); // Récupérez le panier de l'utilisateur avec les détails des cadeaux
     const totalPanier = await calculerTotalPanier(idUtilisateur);
     if (currentUser.admin) {
-        res.redirect("admin");
+        res.redirect("/admin");
     } else {
         pageActuelle = "index";
         const cadeaux = await getMesCadeaux();

@@ -14,11 +14,12 @@
     <!--CSS-->
     <link href="/style/index.css" rel="stylesheet">
     <link href="/style/style.css" rel="stylesheet">
+    <link href="/style/admin.css" rel="stylesheet">
 
 
     <!--JS-->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="script.js"></script>
+    <script src="/scripts/adminScript.js"></script>
 
 
 
@@ -43,18 +44,17 @@
             <div class="head">
                 <div
                     class="container-fluid d-flex flex-column flex-md-row justify-content-md-between align-items-md-center">
-                    <div class="info d-flex align-items-center mb-3 mb-md-0">
 
-                        <h6>
-                            <span class="pts">Points admin</span> :
-                            <span style="font-weight: bold; color: rgb(235, 185, 185);">
-                                illimités
-                            </span>
+                    <div class="info d-flex flex-column flex-md-row align-items-md-center mb-3 mb-md-0">
+                        <h6 class="mb-0 ml-md-3">
+                            <span style="text-decoration: underline;">Points admin</span> :
+                            <span style="font-weight: bold; color: rgb(235, 185, 185);">illimités</span>
                         </h6>
+                        <div class="main-title text-center flex-grow-1 mb-0 d-flex flex-column align-items-md-center">
 
-
-                        <h1 class="main-title text-center flex-grow-1 mb-0">RESMU<br>@<%= currentUser.pseudo %>
-                        </h1>
+                            <h1><strong>RESMU</strong></h1>
+                            <span class="pseudo-taille">@<%= currentUser.pseudo %></span>
+                        </div>
 
                     </div>
 
@@ -67,124 +67,140 @@
                 </div>
             </div>
             <div class="container-fluid">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="card">
-                            <div class="card-title">Clients</div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <!-- Clients existants -->
-                                    <% if(currentUser.admin){ everyClient.forEach(function(client, i) { %>
-                                        <div class="col-md-4">
-                                            <ul class="blocInfoClient">
-                                                <li class="infoClient">
-                                                    <h3 class="titres_client">
-                                                        @<%=client.pseudo %> :
-                                                    </h3>
-                                                    <div class="button-container">
-                                                        <button type="button" class="boutonAfficher<%= i %>"
-                                                            etat="fermer">Afficher
-                                                            informations</button>
-                                                    </div>
+                <div class="row ">
+                    <div class="col-sm-6 col-md-6">
+                        <div class="card-title"><strong>Clients</strong>
+                            <br><br>
+                            <div class="row">
+                                <!-- Clients existants -->
+                                <% everyClient.forEach(function(client, i) { if(!client.admin){ %>
+                                    <div class="col-lg-4 col-sm-12">
+                                        <ul class="blocInfoClient" style="background-color: rgb(45, 48, 52); ">
+                                            <li class="infoClient" style="max-width: 100%; ">
+                                                <h3 class="titres_client">
+                                                    @<%=client.pseudo %>
+                                                </h3>
+                                                <br>
+                                                <button type="button" class="boutonAfficher<%= i %>" etat="fermer"
+                                                    style="max-width: 100%;">Afficher
+                                                    informations</button>
+                                                <ul class="paragrapheCache<%= i %>"
+                                                    style="display: none; line-height: 1; font-size: 14px;max-width: 100%;text-align: left;">
+                                                    <br>
+                                                    <li style="margin-bottom: 5px;">
+                                                        <span class="titres_client">Nom</span> :
+                                                        <%=client.nom %>
+                                                    </li>
+                                                    <li style="margin-bottom: 5px;">
+                                                        <span class="titres_client">Prénom</span> :
+                                                        <%=client.prenom %>
+                                                    </li>
+                                                    <li style="margin-bottom: 5px;">
+                                                        <span class="titres_client">Email</span> :
+                                                        <%=client.email %>
+                                                    </li>
+                                                    <li style="margin-bottom: 5px;">
+                                                        <span class="titres_client">Points</span> :
+                                                        <%=client.points_client %>
+                                                    </li>
+                                                    <li style="margin-bottom: 5px;">
+                                                        <span class="titres_client">Anniversaire</span> :
+                                                        <%=client.anniversaire %>
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                        </ul>
 
-                                                    <ul class="paragrapheCache<%= i %>"
-                                                        style="display: none; line-height: 1; font-size: 14px;">
-                                                        <br>
-                                                        <li style="margin-bottom: 5px;">
-                                                            <span class="titres_client">Nom</span> :
-                                                            <%=client.nom %>
-                                                        </li>
-                                                        <li style="margin-bottom: 5px;">
-                                                            <span class="titres_client">Prénom</span> :
-                                                            <%=client.prenom %>
-                                                        </li>
-                                                        <li style="margin-bottom: 5px;">
-                                                            <span class="titres_client">Email</span> :
-                                                            <%=client.email %>
-                                                        </li>
-                                                        <li style="margin-bottom: 5px;">
-                                                            <span class="titres_client">Points</span> :
-                                                            <%=client.points_client %>
-                                                        </li>
-                                                        <li style="margin-bottom: 5px;">
-                                                            <span class="titres_client">Anniversaire</span> :
-                                                            <%=client.anniversaire %>
-                                                        </li>
-                                                    </ul>
-                                                </li>
-                                            </ul>
-                                        </div>
+
+                                    </div>
+                                    <%}%>
                                         <% }); %>
-                                            <%}%>
-                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="col-md-6">
-                        <div class="card">
-                            <div class="card-title">Gestion</div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-6 text-center">
-                                        <button type="button" class="btn btn-primary w-100">Ajouter un nouveau
-                                            client</button>
 
-                                    </div>
-                                    <div class="col-md-6 text-center">
-                                        <button type="button" class="btn btn-primary w-100">A voir</button>
-                                    </div>
+
+
+                    <div class="col-sm-6 col-md-6">
+                        <div class="card-title "><strong>Gestion du site</strong></div>
+                        <div class="blocGestion ">
+
+                            <div class="row">
+                                <div class="col-md-6 col-sm-12">
+                                    <button type="button" class="btn btn-primary w-100 btnAjouterClient"
+                                        etat="fermer">Ajouter
+                                        un
+                                        nouveau
+                                        client</button>
                                 </div>
+                                <div class="col-md-6 col-sm-12">
+                                    <button type="button" class="btn btn-primary w-100">Second bouton</button>
+                                </div>
+                                <ul class="formCache">
+
+
+                                    <form action="/ajouter_client" method="post" class="color">
+                                        <!--aaaaavoir-->
+                                        <div class=" form-group">
+                                            <label for="prenom">Prénom:</label>
+                                            <input type="text" class="form-control" id="prenom" name="prenom">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="nom">Nom:</label>
+                                            <input type="text" class="form-control" id="nom" name="nom">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="pseudo">Pseudo:</label>
+                                            <input type="text" class="form-control" id="pseudo" name="pseudo">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="email">Email:</label>
+                                            <input type="email" class="form-control" id="email" name="email">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="motdepasse">Mot de passe:</label>
+                                            <input type="password" class="form-control" id="motdepasse"
+                                                name="motdepasse">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="points">Points:</label>
+                                            <input type="number" class="form-control" id="points" name="points">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="anniversaire">Anniversaire:</label>
+                                            <input type="date" class="form-control" id="anniversaire"
+                                                name="anniversaire">
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="form-check">
+                                                <input type="checkbox" class="form-check-input" id="admin" name="admin"
+                                                    value="true">
+                                                <label class="form-check-label" for="admin">Admin</label>
+                                            </div>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Ajouter</button>
+                                    </form>
+
+                                </ul>
+
+
+
+
+
                             </div>
+
+
                         </div>
                     </div>
-
-                </div>
-
-                <div class="card" style="width: 400px;">
-                    <div class="card-body">
-                        <h5 class="card-title">Ajouter un nouveau client</h5>
-                        <form action="/ajouter_client" method="post">
-                            <div class="form-group">
-                                <label for="prenom">Prénom:</label>
-                                <input type="text" class="form-control" id="prenom" name="prenom">
-                            </div>
-                            <div class="form-group">
-                                <label for="nom">Nom:</label>
-                                <input type="text" class="form-control" id="nom" name="nom">
-                            </div>
-                            <div class="form-group">
-                                <label for="pseudo">Pseudo:</label>
-                                <input type="text" class="form-control" id="pseudo" name="pseudo">
-                            </div>
-                            <div class="form-group">
-                                <label for="email">Email:</label>
-                                <input type="email" class="form-control" id="email" name="email">
-                            </div>
-                            <div class="form-group">
-                                <label for="motdepasse">Mot de passe:</label>
-                                <input type="password" class="form-control" id="motdepasse" name="motdepasse">
-                            </div>
-                            <div class="form-group">
-                                <label for="points">Points:</label>
-                                <input type="number" class="form-control" id="points" name="points">
-                            </div>
-                            <div class="form-group">
-                                <label for="anniversaire">Anniversaire:</label>
-                                <input type="date" class="form-control" id="anniversaire" name="anniversaire">
-                            </div>
-                            <div class="form-group">
-                                <div class="form-check">
-                                    <input type="checkbox" class="form-check-input" id="admin" name="admin"
-                                        value="true">
-                                    <label class="form-check-label" for="admin">Admin</label>
-                                </div>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Ajouter</button>
-                        </form>
-                    </div>
                 </div>
 
 
 
-                </body>
+
+
+            </div>
+
+
+
+            </body>

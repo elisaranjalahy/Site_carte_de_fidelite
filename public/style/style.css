@@ -16,8 +16,16 @@ body {
     color: white;
 }
 
+.head {
+    text-align: center;
+    background-color: #6b7d7d;
+    color: #fff;
+    margin-bottom: 20px;
+    width: 100%;
+    min-height: 120px;
+    display: flex;
+}
 
-.blocAdd {
-    margin: 20px;
-    padding-left: 10px;
+.pseudo-taille {
+    font-size: small;
 }
