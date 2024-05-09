@@ -217,11 +217,10 @@ async function viderPanierUtilisateur(idUtilisateur) {
     }
 }
 
-
-async function supprimerCadeauPanierUtilisateur(idUtilisateur, idCadeauASupprimer) {
+async function supprimerCadeauPanierUtilisateur(idUtilisateur, idCadeauASupprimer, couleur, taille) {
     const client = await pool.connect(); // Se connecte à la base de données
     try {
-        await client.query('DELETE FROM panier WHERE id_utilisateur = $1 AND id_cadeau = $2', [idUtilisateur, idCadeauASupprimer]);
+        await client.query('DELETE FROM panier WHERE id_utilisateur = $1 AND id_cadeau = $2 AND couleur = $3 AND taille = $4', [idUtilisateur, idCadeauASupprimer, couleur, taille]);
         console.log("Cadeau du panier de l'utilisateur supprimé avec succès.");
     } catch (error) {
         console.error('Erreur lors de la suppression du cadeau du panier de l\'utilisateur :', error.message);
@@ -231,10 +230,11 @@ async function supprimerCadeauPanierUtilisateur(idUtilisateur, idCadeauASupprime
     }
 }
 
-async function reduireQuantiteCadeau(idUtilisateur, idCadeauASupprimer) {
+
+async function reduireQuantiteCadeau(idUtilisateur, idCadeauASupprimer,couleur,taille) {
     const client = await pool.connect();
     try {
-        await client.query('UPDATE panier SET quantite = quantite - 1 WHERE id_utilisateur = $1 AND id_cadeau = $2', [idUtilisateur, idCadeauASupprimer]);
+        await client.query('UPDATE panier SET quantite = quantite - 1 WHERE id_utilisateur = $1 AND id_cadeau = $2 AND couleur = $3 AND taille = $4', [idUtilisateur, idCadeauASupprimer,couleur,taille]);
         console.log("Quantité du cadeau réduite avec succès.");
     } catch (error) {
         console.error('Erreur lors de la réduction de la quantité du cadeau dans le panier :', error.message);
@@ -424,14 +424,16 @@ server.post("/supprimer-panier", async (req, res) => {
 
     const idCadeauASupprimer = req.body.id_cadeau;
     const quantiteCadeau = req.body.quantite;
+    const couleur = req.body.couleur;
+    const taille = req.body.taille;
 
 
     if (quantiteCadeau > 1) {
-        await reduireQuantiteCadeau(idUtilisateur, idCadeauASupprimer);
+        await reduireQuantiteCadeau(idUtilisateur, idCadeauASupprimer, couleur, taille);
         res.redirect("/index");
     } else {
 
-        await supprimerCadeauPanierUtilisateur(idUtilisateur, idCadeauASupprimer);
+        await supprimerCadeauPanierUtilisateur(idUtilisateur, idCadeauASupprimer, couleur, taille);
         res.redirect("/index");
     }
 });
