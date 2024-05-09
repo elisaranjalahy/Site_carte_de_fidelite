@@ -152,7 +152,7 @@ async function getPanierUtilisateur(idUtilisateur) {
     const client = await pool.connect();
     try {
         const queryResult = await client.query(`
-            SELECT p.id_cadeau, p.quantite, c.nom_cadeau, c.points_cadeau
+            SELECT p.id_cadeau, p.quantite, c.nom_cadeau, c.points_cadeau, p.couleur, p.taille
             FROM panier p
             INNER JOIN cadeaux c ON p.id_cadeau = c.id_cadeau
             WHERE id_utilisateur = $1
@@ -354,6 +354,8 @@ server.post("/ajouter-au-panier", async (req, res) => {
     const idCadeau = req.body.id_cadeau.toString();
     const idCadeauI = req.body.id_cadeau;
     const quantite = req.body.quantite;
+    const couleur = req.body.couleur;
+    const taille = req.body.taille;
 
     // Récupérer l'ID de l'utilisateur depuis la session
     const idUtilisateur = currentUser.id; // Utilisez l'ID de l'utilisateur actuel
@@ -361,10 +363,10 @@ server.post("/ajouter-au-panier", async (req, res) => {
     // Vérifier si le cadeau est déjà dans le panier de l'utilisateur
     const panierUtilisateur = await getPanierUtilisateur(idUtilisateur);
 
-    const cadeauExistant = panierUtilisateur.find(cadeau => cadeau.id_cadeau.toString() === idCadeau); // Convertir en chaîne de caractères
+    const cadeauExistant = panierUtilisateur.find(cadeau => cadeau.id_cadeau.toString() === idCadeau);
 
     //pour vérifier le stock du cadeau
-    if (cadeauExistant) {
+    if (cadeauExistant && cadeauExistant.couleur.toString() === couleur.toString() && cadeauExistant.taille.toString() === taille.toString()) {
         // Si le cadeau est déjà dans le panier, mettre à jour la quantité
         const nouvelleQuantite = parseInt(cadeauExistant.quantite) + parseInt(quantite);
         const cad = await getCadeauById(idCadeauI);
@@ -385,7 +387,7 @@ server.post("/ajouter-au-panier", async (req, res) => {
         // Si le cadeau n'est pas dans le panier, l'ajouter avec une quantité de 1
         const client = await pool.connect();
         try {
-            await client.query("INSERT INTO panier (id_utilisateur, id_cadeau, quantite) VALUES ($1, $2, $3)", [idUtilisateur, idCadeau, quantite]);
+            await client.query("INSERT INTO panier (id_utilisateur, id_cadeau, quantite, couleur, taille) VALUES ($1, $2, $3, $4, $5)", [idUtilisateur, idCadeau, quantite, couleur, taille]);
             console.log("Cadeau ajouté au panier de la base de données avec succès.");
         } catch (error) {
             console.error("Erreur lors de l'ajout du cadeau au panier de la base de données :", error);

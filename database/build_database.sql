@@ -27,6 +27,8 @@ CREATE TABLE PANIER (
     id_utilisateur INTEGER,
     id_cadeau INTEGER,
     quantite INTEGER,
+    COULEUR TEXT,
+    TAILLE TEXT,
     FOREIGN KEY (id_utilisateur) REFERENCES CLIENTS(id),
     FOREIGN KEY (id_cadeau) REFERENCES CADEAUX(id_cadeau)
 );

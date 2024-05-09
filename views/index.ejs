@@ -77,7 +77,7 @@
                                 <div class="row">
                                     <!-- Boucle pour afficher les cadeaux -->
                                     <% if(sessionStart){ cadeaux.forEach(function(cadeau, i) { %>
-                                        <div class="col-md-4">
+                                        <div class="col-md-6">
                                             <ul class="blocInfoCadeau">
                                                 <li class="infoCadeau">
                                                     <h6 class="titre_cadeau">
@@ -104,10 +104,27 @@
                                                             <input type="hidden" name="points_cadeau"
                                                                 value="<%= cadeau.points_cadeau %>">
 
-                                                            <input type="number" name="quantite" value="1" min="0"
+                                                                <label for="couleur">Couleur:</label>
+                                                               <select name="couleur" id="couleur">
+                                                                    <option value="rouge">Rouge</option>
+                                                                    <option value="bleu">Bleu</option>
+                                                                    <option value="vert">Vert</option>
+                                                                    <!-- Ajoutez d'autres options de couleur selon vos besoins -->
+                                                                </select>
+                                                                <br>
+                                                                <label for="taille">Taille:</label>
+                                                                <select name="taille" id="taille">
+                                                                    <option value="petite">Petite</option>
+                                                                    <option value="moyenne">Moyenne</option>
+                                                                    <option value="grande">Grande</option>
+                                                                    <!-- Ajoutez d'autres options de taille selon vos besoins -->
+                                                                </select>
+                                                                <br><br>
+
+                                                            <input type="number" name="quantite" value="1" min="1"
                                                                 class="quantité">
                                                             <br>
-                                                            <br>
+                                                            
 
                                                             <button type="submit" class="btn btn-success">Ajouter au
                                                                 panier</button>
@@ -136,7 +153,7 @@
                                         <% panier.forEach(function(item) { %>
                                             <li style="display: flex; justify-content: space-between;">
                                                 <br>
-                                                <%= item.nom_cadeau %> - <%= item.points_cadeau %> points | Quantité
+                                                <%= item.nom_cadeau %> | <%= item.couleur %> | <%= item.taille %> - <%= item.points_cadeau %> points | Quantité
                                                         :
                                                         <%= item.quantite %>
                                                             <form action="/supprimer-panier" method="POST">

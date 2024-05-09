@@ -171,3 +171,18 @@ img {
     border-radius: 5px;
     outline: none;
 }
+
+.btn-container form label,
+.btn-container form select,
+.btn-container form .quantité,
+.btn-container form button {
+    margin-right: 10px; /* Marge entre les éléments pour l'espacement */
+}
+.btn-container form label {
+    color: #ddd; /* Définir la couleur du texte des labels */
+    font-weight: bold; 
+}
+
+.btn-container form select option {
+    color: darkgray; /* Définir la couleur du texte des options de couleur */
+}
