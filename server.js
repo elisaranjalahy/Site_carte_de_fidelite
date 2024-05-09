@@ -195,7 +195,7 @@ async function mettreAJourPointsUtilisateur(idUtilisateur, nouveauxPoints) {
     try {
         await client.query('UPDATE clients SET points_client = $1 WHERE id = $2', [nouveauxPoints, idUtilisateur]);
         console.log("Points de l'utilisateur mis à jour avec succès.");
-        currentUser.points=nouveauxPoints;
+        currentUser.points = nouveauxPoints;
     } catch (error) {
         console.error('Erreur lors de la mise à jour des points de l\'utilisateur :', error.message);
         throw error; // Lève l'erreur pour la traiter à un niveau supérieur
@@ -248,12 +248,10 @@ async function reduireQuantiteCadeau(idUtilisateur, idCadeauASupprimer) {
 
 //middleware pour gerer l'accessibilité au routes
 function estConnecté(req, res, next) {
-    // vérifie si le cookie d'authentification existe
-
 
     if (sessionStart) { //connecté
         if (pageActuelle !== "connexion" /*chemin actuek*/ && req.path === "/connexion" /*chemin demandé*/) {
-            //res.clearCookie('monCookie'); //déconnecte l'user
+
             clearUser(currentUser);
             sessionStart = false;
             let panier = req.session.panier || [];
@@ -334,7 +332,11 @@ server.post("/connexion", async (req, res) => {
         //res.cookie('monCookie', 'authentifié', { maxAge: 365 * 24 * 60 * 60 * 1000, httpOnly: true }); // maxAge définit la durée de vie du cookie en millisecondes (ici on met 1an)
         console.log(resultat.rows);
         sessionStart = true; //on démarre une "session"
-        res.redirect("/index");;
+        if (currentUser.admin) {
+            res.redirect("/admin");
+        } else {
+            res.redirect("/index");;
+        }
     } else {
         // authentification ratée, redirection de l'utilisateur vers la page de connexion 
         res.redirect("/connexion?erreur=authentification");
@@ -350,8 +352,8 @@ server.post("/deconnexion", async (req, res) => {
 //route pour l'ajout au panier
 server.post("/ajouter-au-panier", async (req, res) => {
     const idCadeau = req.body.id_cadeau.toString();
-    const idCadeauI=req.body.id_cadeau;
-    const quantite=req.body.quantite;
+    const idCadeauI = req.body.id_cadeau;
+    const quantite = req.body.quantite;
 
     // Récupérer l'ID de l'utilisateur depuis la session
     const idUtilisateur = currentUser.id; // Utilisez l'ID de l'utilisateur actuel
@@ -365,19 +367,19 @@ server.post("/ajouter-au-panier", async (req, res) => {
     if (cadeauExistant) {
         // Si le cadeau est déjà dans le panier, mettre à jour la quantité
         const nouvelleQuantite = parseInt(cadeauExistant.quantite) + parseInt(quantite);
-        const cad=await getCadeauById(idCadeauI);
-        if(nouvelleQuantite>cad.stock){
-            console.log("Pas assez de stock pour : ",cadeauExistant.nom_cadeau);
-        }else {
-        const client = await pool.connect();
-        try {
-            await client.query("UPDATE panier SET quantite = $1 WHERE id_utilisateur = $2 AND id_cadeau = $3", [nouvelleQuantite, idUtilisateur, idCadeau]);
-            console.log("Quantité du cadeau mise à jour avec succès dans le panier.");
-        } catch (error) {
-            console.error("Erreur lors de la mise à jour de la quantité du cadeau dans le panier :", error);
-        } finally {
-            client.release();
-        }
+        const cad = await getCadeauById(idCadeauI);
+        if (nouvelleQuantite > cad.stock) {
+            console.log("Pas assez de stock pour : ", cadeauExistant.nom_cadeau);
+        } else {
+            const client = await pool.connect();
+            try {
+                await client.query("UPDATE panier SET quantite = $1 WHERE id_utilisateur = $2 AND id_cadeau = $3", [nouvelleQuantite, idUtilisateur, idCadeau]);
+                console.log("Quantité du cadeau mise à jour avec succès dans le panier.");
+            } catch (error) {
+                console.error("Erreur lors de la mise à jour de la quantité du cadeau dans le panier :", error);
+            } finally {
+                client.release();
+            }
         }
     } else {
         // Si le cadeau n'est pas dans le panier, l'ajouter avec une quantité de 1
@@ -398,7 +400,7 @@ server.post("/ajouter-au-panier", async (req, res) => {
 
 
 server.post("/valider-panier", async (req, res) => {
-    const idUtilisateur = currentUser.id; 
+    const idUtilisateur = currentUser.id;
     const totalPanier = await calculerTotalPanier(idUtilisateur);
     if (currentUser.points >= totalPanier) {
         // Déduire les points du total des points de l'utilisateur
@@ -410,33 +412,33 @@ server.post("/valider-panier", async (req, res) => {
         res.redirect("/index");
     } else {
         // Afficher un message d'échec
-        console.log("Points insuffisants pour valider le panier." );
+        console.log("Points insuffisants pour valider le panier.");
         res.redirect("/index");
     }
 });
 
 server.post("/supprimer-panier", async (req, res) => {
-        const idUtilisateur = currentUser.id;
+    const idUtilisateur = currentUser.id;
 
-        const idCadeauASupprimer = req.body.id_cadeau;
-        const quantiteCadeau = req.body.quantite; 
+    const idCadeauASupprimer = req.body.id_cadeau;
+    const quantiteCadeau = req.body.quantite;
 
-       
-        if (quantiteCadeau > 1) {
-            await reduireQuantiteCadeau(idUtilisateur, idCadeauASupprimer);
-            res.redirect("/index");
-        } else {
-            
-            await supprimerCadeauPanierUtilisateur(idUtilisateur, idCadeauASupprimer);
-            res.redirect("/index");
-        }
+
+    if (quantiteCadeau > 1) {
+        await reduireQuantiteCadeau(idUtilisateur, idCadeauASupprimer);
+        res.redirect("/index");
+    } else {
+
+        await supprimerCadeauPanierUtilisateur(idUtilisateur, idCadeauASupprimer);
+        res.redirect("/index");
+    }
 });
 
 
 
 //premiere page affichée au lancement du serveu: page de connexion
 server.get("/", (req, res) => {
-    pageActuelle = "/";
+    pageActuelle = "connexion";
     if (req.query.erreur === "authentification") {
         res.render("connexion", { erreur: "authentification" });
     }
@@ -462,10 +464,7 @@ server.get("/index", estConnecté, async (req, res) => {
     const panier = await getPanierUtilisateur(idUtilisateur); // Récupérez le panier de l'utilisateur avec les détails des cadeaux
     const totalPanier = await calculerTotalPanier(idUtilisateur);
     if (currentUser.admin) {
-        const cadeaux = await getCadeaux();
-        const everyClient = await getEveryClient();
-        pageActuelle = "admin";
-        res.render("admin", { everyClient: everyClient, sessionStart: sessionStart, currentUser: currentUser, cadeaux: cadeaux, panier: panier, totalPanier: totalPanier }); // Rend la vue index avec le tableau de cadeaux et le panier de l'utilisateur
+        res.redirect("admin");
     } else {
         pageActuelle = "index";
         const cadeaux = await getMesCadeaux();
@@ -473,7 +472,19 @@ server.get("/index", estConnecté, async (req, res) => {
     }
 });
 
+server.get("/admin", estConnecté, async (req, res) => {
+    if (!currentUser.admin) {
+        const page = "/" + pageActuelle;
+        res.redirect("/" + pageActuelle);
 
+    } else {
+        pageActuelle = "admin";
+        const cadeaux = await getCadeaux();
+        const everyClient = await getEveryClient();
+        pageActuelle = "admin";
+        res.render("admin", { everyClient: everyClient, sessionStart: sessionStart, currentUser: currentUser, cadeaux: cadeaux });
+    }
+});
 
 // route finale : l'argument next est ici ignoré
 server.use((req, res) => {
