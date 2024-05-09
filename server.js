@@ -268,7 +268,8 @@ function estConnecté(req, res, next) {
             clearUser(currentUser);
             sessionStart = false;
             let panier = req.session.panier || [];
-            res.render(pageActuelle, { sessionStart: false, currentUser: currentUser, panier: panier, erreur: "" }); //rend la vue index avec le tableau cadeaux
+            const error=null;
+            res.render(pageActuelle, { sessionStart: false, currentUser: currentUser, panier: panier, error: error }); //rend la vue index avec le tableau cadeaux
         } else {
             next();
         }
@@ -485,7 +486,8 @@ server.get("/index", estConnecté, async (req, res) => {
     } else {
         pageActuelle = "index";
         const cadeaux = await getMesCadeaux();
-        res.render("index", { sessionStart: sessionStart, currentUser: currentUser, cadeaux: cadeaux, panier: panier, totalPanier: totalPanier , error:null}); // Rend la vue index avec le tableau de cadeaux et le panier de l'utilisateur
+        const error = null;
+        res.render("index", { sessionStart: sessionStart, currentUser: currentUser, cadeaux: cadeaux, panier: panier, totalPanier: totalPanier , error:error}); // Rend la vue index avec le tableau de cadeaux et le panier de l'utilisateur
     }
 });
 
