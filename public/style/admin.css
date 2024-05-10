@@ -35,3 +35,12 @@
     font-size: 14px;
     margin-top: -10px;
 }
+
+.modifClient {
+    width: px;
+    display: flex;
+    position: relative;
+    max-height: 15px;
+    font-size: small;
+
+}

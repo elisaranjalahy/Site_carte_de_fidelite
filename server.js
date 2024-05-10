@@ -257,7 +257,7 @@ async function renderErrorPage(res, errorMessage) {
         anniversaireClass = "anniversaire";
     }
     if (currentUser.admin) {
-        res.redirect("admin");
+        res.redirect("gerante");
     } else {
         pageActuelle = "index";
         const cadeaux = await getMesCadeaux();
@@ -377,7 +377,7 @@ server.post("/connexion", async (req, res) => {
         console.log(resultat.rows);
         sessionStart = true; //on démarre une "session"
         if (currentUser.admin) {
-            res.redirect("/admin");
+            res.redirect("/gerante");
         } else {
             res.redirect("/index");;
         }
@@ -447,13 +447,44 @@ server.post("/ajouter-au-panier", async (req, res) => {
 
 server.post("/ajouter_client", async (req, res) => {
     const { prenom, nom, pseudo, email, points, anniversaire, admin } = req.body;
-
+    //decomposition de "anniversaire" pour avoir un format correct
+    const dateAnniv = new Date(anniversaire);
+    const jour = dateAnniv.getDate();
+    const mois = dateAnniv.getMonth() + 1;
+    const annee = dateAnniv.getFullYear();
+    const newDate = annee + "-" + mois + "-" + jour;
     const client = await pool.connect();
     const mot_de_passe_par_defaut = "defaut";
     try {
         await client.query('INSERT INTO clients (prenom, nom, pseudo, email, mot_de_passe, points_client, anniversaire, admin) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
-            [prenom, nom, pseudo, email, mot_de_passe_par_defaut, points, anniversaire, admin === "true"]);
+            [prenom, nom, pseudo, email, mot_de_passe_par_defaut, points, newDate, admin === "true"]);
         res.send("Nouveau client ajouté avec succès !");
+    } catch (error) {
+        console.error('Erreur lors de l\'ajout du nouveau client :', error.message);
+        res.status(500).send("Une erreur s'est produite lors de l'ajout du nouveau client.");
+    } finally {
+        client.release();
+    }
+});
+
+server.post("/maj_client", async (req, res) => {
+
+    const { prenom, nom, pseudo, email, points, anniversaire } = req.body;
+    //decomposition de "anniversaire" pour avoir un format correct
+    const dateAnniv = new Date(anniversaire);
+    const jour = dateAnniv.getDate();
+    const mois = dateAnniv.getMonth() + 1;
+    const annee = dateAnniv.getFullYear();
+    const newDate = annee + "-" + mois + "-" + jour;
+    const client = await pool.connect();
+    try {
+        await client.query(
+            `UPDATE clients 
+             SET prenom = $1, nom = $2, email = $3, points_client = $4, anniversaire = $5 
+             WHERE pseudo = $6`,
+            [prenom, nom, email, points, newDate, pseudo]
+        );
+        console.log(req.body);
     } catch (error) {
         console.error('Erreur lors de l\'ajout du nouveau client :', error.message);
         res.status(500).send("Une erreur s'est produite lors de l'ajout du nouveau client.");
@@ -535,7 +566,7 @@ server.get("/index", estConnecté, async (req, res) => {
         anniversaireClass = "anniversaire";
     }
     if (currentUser.admin) {
-        res.redirect("/admin");
+        res.redirect("/gerante");
     } else {
         pageActuelle = "index";
         const cadeaux = await getMesCadeaux();
@@ -544,17 +575,18 @@ server.get("/index", estConnecté, async (req, res) => {
     }
 });
 
-server.get("/admin", estConnecté, async (req, res) => {
+server.get("/gerante", estConnecté, async (req, res) => {
     if (!currentUser.admin) {
         const page = "/" + pageActuelle;
         res.redirect("/" + pageActuelle);
 
     } else {
+
         pageActuelle = "admin";
         const cadeaux = await getCadeaux();
         const everyClient = await getEveryClient();
-        pageActuelle = "admin";
-        res.render("admin", { everyClient: everyClient, sessionStart: sessionStart, currentUser: currentUser, cadeaux: cadeaux });
+        pageActuelle = "gerante";
+        res.render("gerante", { everyClient: everyClient, sessionStart: sessionStart, currentUser: currentUser, cadeaux: cadeaux });
     }
 });
 

@@ -19,7 +19,7 @@
 
     <!--JS-->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="/scripts/adminScript.js"></script>
+    <script src="/scripts/geranteScript.js"></script>
 
 
 
@@ -34,7 +34,6 @@
     </script>
 
     <% } %>
-
 
         <!--FIN DES MESSAGES D'ALERTE-->
 
@@ -90,34 +89,90 @@
 
 
                                                 <br>
-                                                <button type="button" class="boutonAfficher<%= i %>" etat="fermer"
-                                                    style="max-width: 100%;">Afficher
-                                                    informations</button>
-                                                <ul class="paragrapheCache<%= i %>"
-                                                    style="display: none; line-height: 1; font-size: 14px;max-width: 100%;text-align: left;">
-                                                    <br>
-                                                    <li style="margin-bottom: 5px;">
-                                                        <span class="titres_client">Nom</span> :
-                                                        <%=client.nom %>
-                                                    </li>
-                                                    <li style="margin-bottom: 5px;">
-                                                        <span class="titres_client">Prénom</span> :
-                                                        <%=client.prenom %>
-                                                    </li>
-                                                    <li style="margin-bottom: 5px;">
-                                                        <span class="titres_client">Email</span> :
-                                                        <%=client.email %>
-                                                    </li>
-                                                    <li style="margin-bottom: 5px;">
-                                                        <span class="titres_client">Points</span> :
-                                                        <%=client.points_client %>
-                                                    </li>
-                                                    <li style="margin-bottom: 5px;">
-                                                        <span class="titres_client">Anniversaire</span> :
-                                                        <%=client.anniversaire %>
-                                                    </li>
+                                                <form id="formClient" action="/maj_client" method="POST">
 
-                                                </ul>
+                                                    <button type="button" class="boutonAfficher<%= i %>" etat="afficher"
+                                                        style="max-width: 100%;">Afficher
+                                                        informations</button>
+                                                    <ul class="paragrapheCache<%= i %>"
+                                                        style="display: none; line-height: 1; font-size: 14px;max-width: 100%;text-align: left;">
+                                                        <br>
+                                                        <span class="modifClient"
+                                                            style="display: none; text-decoration: underline;">
+                                                            Pseudo :
+                                                        </span>
+                                                        <input type="text" class="form-control modifClient"
+                                                            name="pseudo" value="<%=client.pseudo %>"
+                                                            style="display: none;" readonly>
+
+
+
+                                                        <li class="data" style="margin-bottom: 5px;">
+                                                            <span class="titres_client">Nom</span> :
+                                                            <span class="defaut" data-field="nom">
+                                                                <%=client.nom %>
+                                                            </span>
+
+                                                            <input type="text" class="form-control modifClient"
+                                                                name="nom" value="<%=client.nom %>"
+                                                                style="display: none;">
+
+                                                        </li>
+                                                        <li style="margin-bottom: 5px;">
+                                                            <span class="titres_client">Prénom</span> :
+                                                            <span class="defaut" data-field="prenom">
+                                                                <%=client.prenom %>
+                                                            </span>
+                                                            <input type="text" class="form-control modifClient"
+                                                                name="prenom" value="<%=client.prenom %>"
+                                                                style="display: none;">
+
+                                                        </li>
+                                                        <li style="margin-bottom: 5px;">
+                                                            <span class="titres_client">Email</span> :
+                                                            <span class="defaut" data-field="email">
+                                                                <%=client.email %>
+                                                            </span>
+                                                            <input type="email" class="form-control modifClient"
+                                                                name="email" value="<%=client.email %>"
+                                                                style="display: none;">
+
+                                                        </li>
+                                                        <li style="margin-bottom: 5px;">
+                                                            <span class="titres_client">Points</span> :
+                                                            <span class="defaut" data-field="points">
+                                                                <%=client.points_client %>
+                                                            </span>
+                                                            <input type="number" class="form-control modifClient"
+                                                                name="points" value="<%=client.points_client %>"
+                                                                style="display: none;">
+
+                                                        </li>
+                                                        <li style="margin-bottom: 5px;">
+                                                            <span class="titres_client">Anniversaire</span> :
+                                                            <span class="defaut" data-field="anniversaire">
+                                                                <%=client.anniversaire %>
+                                                            </span>
+                                                            <input type="text" class="form-control modifClient"
+                                                                name="anniversaire" value="<%=client.anniversaire %>"
+                                                                style="display: none;">
+
+                                                        </li>
+
+
+                                                        <li style="margin-bottom: 5px;">
+                                                            <button type="button"
+                                                                class="boutonModifier">Modifier</button>
+                                                            <button type="submit" class="boutonSave"
+                                                                style="display: none;"
+                                                                etat="afficher">Enregistrer</button>
+                                                            <button type="button" class="boutonAnnuler"
+                                                                style="display: none;" etat="afficher">annuler</button>
+
+                                                        </li>
+
+                                                    </ul>
+                                                </form>
                                             </li>
                                         </ul>
 
@@ -139,7 +194,7 @@
                             <div class="row">
                                 <div class="col-md-6 col-sm-12">
                                     <button type="button" class="btn btn-primary w-100 btnAjouterClient"
-                                        etat="fermer">Ajouter
+                                        etat="afficher">Ajouter
                                         un
                                         nouveau
                                         client</button>

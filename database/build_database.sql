@@ -10,9 +10,12 @@ CREATE TABLE CLIENTS (
     EMAIL TEXT UNIQUE,
     MOT_DE_PASSE TEXT NOT NULL,
     POINTS_CLIENT INTEGER,
-    ANNIVERSAIRE DATE,
+    ANNIVERSAIRE VARCHAR(10),
     ADMIN BOOLEAN DEFAULT FALSE
 );
+
+-- Ajout de l'index sur la colonne PSEUDO
+CREATE INDEX IDX_PSEUDO ON CLIENTS (PSEUDO);
 
 CREATE TABLE CADEAUX (
     ID_CADEAU SERIAL PRIMARY KEY,
@@ -60,9 +63,19 @@ INSERT INTO CLIENTS (
     'jeanbav@gmail.com',
     'JeanBav',
     100,
+    '2024-05-17',
+    FALSE
+),
+(
+    'Jourd',
+    'Anniv',
+    'jourdanniv',
+    'fetefete@gmail.com',
+    'AZERTY',
+    100,
     '2024-05-10',
     FALSE
-);
+);;
 
 INSERT INTO CADEAUX (
     NOM_CADEAU,
