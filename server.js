@@ -113,6 +113,7 @@ async function getCadeaux() {
 
 }
 
+
 async function getMesCadeaux() {
     const client = await pool.connect(); // Se connecte à la base de données
     let result = [];
@@ -270,7 +271,7 @@ async function getAnniv(id_utilisateur) {
     const client = await pool.connect(); // Se connecte à la base de données
     try {
         const result = await client.query('SELECT anniversaire FROM clients WHERE id = $1 ', [id_utilisateur]);
-        return result;
+        return result.rows[0].anniversaire;
     } catch (error) {
         console.error('Erreur lors de la récupération de l\'anniv:', error.message);
         throw error; // Lève l'erreur pour la traiter à un niveau supérieur

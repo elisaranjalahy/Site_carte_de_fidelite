@@ -19,7 +19,8 @@ CREATE TABLE CADEAUX (
     NOM_CADEAU TEXT,
     POINTS_CADEAU INTEGER,
     IMAGE_CADEAU TEXT,
-    STOCK INTEGER
+    STOCK INTEGER,
+    ANNIV BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE PANIER (
@@ -32,6 +33,7 @@ CREATE TABLE PANIER (
     FOREIGN KEY (ID_UTILISATEUR) REFERENCES CLIENTS(ID),
     FOREIGN KEY (ID_CADEAU) REFERENCES CADEAUX(ID_CADEAU)
 );
+
 
 --REMPLISSAGE des tables
 INSERT INTO CLIENTS (
@@ -62,6 +64,34 @@ INSERT INTO CLIENTS (
     100,
     '2024-05-10',
     FALSE
+),
+(
+    'Jana',
+    'Ayadi',
+    'janaze',
+    'janaze@gmail.com',
+    'JanaAyadi',
+    100,
+    '2024-06-10',
+    FALSE
+);
+
+INSERT INTO CADEAUX (
+    NOM_CADEAU,
+    POINTS_CADEAU,
+    IMAGE_CADEAU,
+    ANNIV
+) VALUES (
+    'Gâteau anniversaire',
+    0,
+    '/images/image16.jpeg',
+    TRUE
+),
+(
+    'Airpods',
+    100,
+    '/images/image14.jpeg',
+    TRUE
 );
 
 INSERT INTO CADEAUX (
@@ -159,3 +189,5 @@ INSERT INTO CADEAUX (
     '/images/image15.jpeg',
     5
 );
+
+
