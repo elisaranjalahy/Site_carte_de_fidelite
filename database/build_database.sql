@@ -70,9 +70,9 @@ INSERT INTO CADEAUX (
     IMAGE_CADEAU,
     STOCK
 ) VALUES (
-    'Lot de 2 Mousquetons',
-    5,
-    '/images/image1.jpeg',
+    'Lot de 4 Strap',
+    15,
+    '/images/image10.jpeg',
     5
 ),
 (
@@ -124,9 +124,9 @@ INSERT INTO CADEAUX (
     5
 ),
 (
-    'Lot de 4 Strap',
-    15,
-    '/images/image10.jpeg',
+    'Lot de 2 Mousquetons',
+    5,
+    '/images/image1.jpeg',
     5
 ),
 (

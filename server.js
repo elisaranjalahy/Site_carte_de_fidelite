@@ -346,7 +346,8 @@ function clearUser(user) {
 
 //GESTION DES ROUTES
 
-// route pour gérer la soumission du formulaire de connexion
+
+//post
 server.post("/connexion", async (req, res) => {
 
     currentUser["pseudo"] = req.body.pseudo;
@@ -392,7 +393,7 @@ server.post("/deconnexion", (req, res) => {
     res.redirect("/connexion");
 });
 
-//route pour l'ajout au panier
+
 server.post("/ajouter-au-panier", async (req, res) => {
     const idCadeau = req.body.id_cadeau.toString();
     const idCadeauI = req.body.id_cadeau;
@@ -444,6 +445,22 @@ server.post("/ajouter-au-panier", async (req, res) => {
 
 });
 
+server.post("/ajouter_client", async (req, res) => {
+    const { prenom, nom, pseudo, email, points, anniversaire, admin } = req.body;
+
+    const client = await pool.connect();
+    const mot_de_passe_par_defaut = "defaut";
+    try {
+        await client.query('INSERT INTO clients (prenom, nom, pseudo, email, mot_de_passe, points_client, anniversaire, admin) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
+            [prenom, nom, pseudo, email, mot_de_passe_par_defaut, points, anniversaire, admin === "true"]);
+        res.send("Nouveau client ajouté avec succès !");
+    } catch (error) {
+        console.error('Erreur lors de l\'ajout du nouveau client :', error.message);
+        res.status(500).send("Une erreur s'est produite lors de l'ajout du nouveau client.");
+    } finally {
+        client.release();
+    }
+});
 
 
 server.post("/valider-panier", async (req, res) => {
