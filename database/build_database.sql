@@ -20,7 +20,8 @@ CREATE TABLE CADEAUX (
     POINTS_CADEAU INTEGER,
     IMAGE_CADEAU TEXT,
     STOCK INTEGER,
-    ANNIV BOOLEAN DEFAULT FALSE
+    ANNIV BOOLEAN DEFAULT FALSE,
+    MENU BOOLEAN
 );
 
 CREATE TABLE PANIER (
@@ -80,114 +81,129 @@ INSERT INTO CADEAUX (
     NOM_CADEAU,
     POINTS_CADEAU,
     IMAGE_CADEAU,
-    ANNIV
+    STOCK,
+    ANNIV,
+    MENU
 ) VALUES (
     'Gâteau anniversaire',
     0,
     '/images/image16.jpeg',
-    TRUE
+    1,
+    TRUE,
+    FALSE
 ),
 (
     'Airpods',
     100,
     '/images/image14.jpeg',
-    TRUE
+    1,
+    TRUE,
+    FALSE
 );
 
 INSERT INTO CADEAUX (
     NOM_CADEAU,
     POINTS_CADEAU,
     IMAGE_CADEAU,
-    STOCK
+    STOCK,
+    MENU
 ) VALUES (
     'Lot de 4 Strap',
     15,
     '/images/image10.jpeg',
-    5
+    5,
+    TRUE
 ),
 (
     'Une séance bloc avec François Civil',
     350,
     '/images/image2.jpeg',
-    5
+    5,
+    FALSE
 ),
 (
     'Chaussons Scarpa',
     1000,
     '/images/image3.jpeg',
-    5
+    5,
+    TRUE
 ),
 (
     'Brosse à prise',
     15,
     '/images/image4.jpeg',
-    5
+    5,
+    TRUE
 ),
 (
     'Carte de 10 entrée à Climb Up',
     600,
     '/images/image5.jpeg',
-    5
+    5,
+    FALSE
 ),
 (
     'Crashpad SNAP',
     250,
     '/images/image6.jpeg',
-    5
+    5,
+    FALSE
 ),
 (
     'Magnésie Liquide SNAP',
     20,
     '/images/image7.jpeg',
-    5
+    5,
+    FALSE
 ),
 (
     'Magnésie en poudre',
     20,
     '/images/image8.jpeg',
-    5
+    5,
+    FALSE
 ),
 (
     'Sac à magnésie ARCTERYX',
     150,
     '/images/image9.jpeg',
-    5
+    5,
+    FALSE
 ),
 (
     'Lot de 2 Mousquetons',
     5,
     '/images/image1.jpeg',
-    5
+    5,
+    TRUE
 ),
 (
     'T-shirt Patagonia Bleu Marine',
     25,
     '/images/image11.jpeg',
-    5
+    5,
+    FALSE
 ),
 (
     'Box de 10 prises avec vis',
     40,
     '/images/image12.jpeg',
-    5
+    5,
+    FALSE
 ),
 (
     'Poutre',
     120,
     '/images/image13.jpeg',
-    5
-),
-(
-    'Ecouteurs Bluetooth',
-    300,
-    '/images/image14.jpeg',
-    5
+    5,
+    FALSE
 ),
 (
     'Lot de 8 chouchous',
     10,
     '/images/image15.jpeg',
-    5
+    5,
+    TRUE
 );
 
 

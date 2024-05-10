@@ -134,29 +134,40 @@
                                                                                                 name="points_cadeau"
                                                                                                 value="<%= cadeau.points_cadeau %>">
 
-                                                                                            <label
-                                                                                                for="couleur">Couleur:</label>
-                                                                                            <select name="couleur" id="couleur">
-                                                                                                <option value="rouge">Rouge
-                                                                                                </option>
-                                                                                                <option value="bleu">Bleu
-                                                                                                </option>
-                                                                                                <option value="vert">Vert
-                                                                                                </option>
-                                                                                                <!-- Ajoutez d'autres options de couleur selon vos besoins -->
-                                                                                            </select>
-                                                                                            <br>
-                                                                                            <label for="taille">Taille:</label>
-                                                                                            <select name="taille" id="taille">
-                                                                                                <option value="petite">Petite
-                                                                                                </option>
-                                                                                                <option value="moyenne">Moyenne
-                                                                                                </option>
-                                                                                                <option value="grande">Grande
-                                                                                                </option>
-                                                                                                <!-- Ajoutez d'autres options de taille selon vos besoins -->
-                                                                                            </select>
-                                                                                            <br><br>
+
+                                                                                                <% if (cadeau.menu ) { %>
+                                                                                                    <label
+                                                                                                        for="couleur">Couleur:</label>
+                                                                                                    <select name="couleur" id="couleur">
+                                                                                                        <option value="rouge">Rouge
+                                                                                                        </option>
+                                                                                                        <option value="bleu">Bleu
+                                                                                                        </option>
+                                                                                                        <option value="vert">Vert
+                                                                                                        </option>
+                                                                                                        <!-- Ajoutez d'autres options de couleur selon vos besoins -->
+                                                                                                    </select>
+                                                                                                    <br>
+                                                                                                    <label for="taille">Taille:</label>
+                                                                                                    <select name="taille" id="taille">
+                                                                                                        <option value="petite">Petite
+                                                                                                        </option>
+                                                                                                        <option value="moyenne">Moyenne
+                                                                                                        </option>
+                                                                                                        <option value="grande">Grande
+                                                                                                        </option>
+                                                                                                        <!-- Ajoutez d'autres options de taille selon vos besoins -->
+                                                                                                    </select>
+                                                                                                    <br><br>
+                                                                                                <% } else { %>
+                                                                                                    <input type="hidden" name="couleur"
+                                                                                                        value="neutre"
+                                                                                                        class="couleur">
+                                                                                                    <input type="hidden" name="taille"
+                                                                                                        value="moyenne"
+                                                                                                        class="taille">
+                                                                                                    <br>
+                                                                                                <% } %>
 
                                                                                             <input type="number" name="quantite"
                                                                                                 value="1" min="1"
@@ -211,33 +222,49 @@
                                                                                                 name="points_cadeau"
                                                                                                 value="<%= cadeau.points_cadeau %>">
 
-                                                                                            <label
-                                                                                                for="couleur">Couleur:</label>
-                                                                                            <select name="couleur" id="couleur">
-                                                                                                <option value="rouge">Rouge
-                                                                                                </option>
-                                                                                                <option value="bleu">Bleu
-                                                                                                </option>
-                                                                                                <option value="vert">Vert
-                                                                                                </option>
-                                                                                                <!-- Ajoutez d'autres options de couleur selon vos besoins -->
-                                                                                            </select>
-                                                                                            <br>
-                                                                                            <label for="taille">Taille:</label>
-                                                                                            <select name="taille" id="taille">
-                                                                                                <option value="petite">Petite
-                                                                                                </option>
-                                                                                                <option value="moyenne">Moyenne
-                                                                                                </option>
-                                                                                                <option value="grande">Grande
-                                                                                                </option>
-                                                                                                <!-- Ajoutez d'autres options de taille selon vos besoins -->
-                                                                                            </select>
-                                                                                            <br><br>
+                                                                                                <% if (cadeau.menu ) { %>
+                                                                                                    <label
+                                                                                                        for="couleur">Couleur:</label>
+                                                                                                    <select name="couleur" id="couleur">
+                                                                                                        <option value="rouge">Rouge
+                                                                                                        </option>
+                                                                                                        <option value="bleu">Bleu
+                                                                                                        </option>
+                                                                                                        <option value="vert">Vert
+                                                                                                        </option>
+                                                                                                        <!-- Ajoutez d'autres options de couleur selon vos besoins -->
+                                                                                                    </select>
+                                                                                                    <br>
+                                                                                                    <label for="taille">Taille:</label>
+                                                                                                    <select name="taille" id="taille">
+                                                                                                        <option value="petite">Petite
+                                                                                                        </option>
+                                                                                                        <option value="moyenne">Moyenne
+                                                                                                        </option>
+                                                                                                        <option value="grande">Grande
+                                                                                                        </option>
+                                                                                                        <!-- Ajoutez d'autres options de taille selon vos besoins -->
+                                                                                                    </select>
+                                                                                                    <br><br>
+                                                                                                <% } else { %>
+                                                                                                    <input type="hidden" name="couleur"
+                                                                                                        value="neutre"
+                                                                                                        class="couleur">
+                                                                                                    <input type="hidden" name="taille"
+                                                                                                        value="moyenne"
+                                                                                                        class="taille">
+                                                                                                    <br>
+                                                                                                <% } %>
 
-                                                                                            <input type="number" name="quantite"
-                                                                                                value="1" min="1"
-                                                                                                class="quantité">
+                                                                                                <% if (cadeau.anniv ) { %>
+                                                                                                    <input type="hidden" name="quantite"
+                                                                                                        value="1" 
+                                                                                                        class="quantité">
+                                                                                                <% } else { %>
+                                                                                                    <input type="number" name="quantite"
+                                                                                                        value="1" min="1"
+                                                                                                        class="quantité">
+                                                                                                <% } %>
                                                                                             <br>
 
 
