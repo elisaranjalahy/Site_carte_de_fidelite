@@ -93,7 +93,7 @@
 
                                         <div class="row">
                                             <!-- Colonne pour les cadeaux -->
-                                            <div class="col-md-6">
+                                            <div class="col-md-8 ">
                                                 <div class="card">
                                                     <div class="card-title">Liste des cadeaux :</div>
                                                     <div class="card-body">
@@ -104,7 +104,7 @@
                                                                 %>
                                                                 <% if (!anniversaireClass ) { %>
                                                                     <% if (!cadeau.anniv ) { %>
-                                                                        <div class="col-md-6">
+                                                                        <div class="col-md-4 col-sm-6 ">
                                                                             <ul class="blocInfoCadeau">
                                                                                 <li class="infoCadeau">
                                                                                     <h6 class="titre_cadeau">
@@ -156,7 +156,6 @@
                                                                                                         value="vert">
                                                                                                         Vert
                                                                                                     </option>
-                                                                                                    <!-- Ajoutez d'autres options de couleur selon vos besoins -->
                                                                                                 </select>
                                                                                                 <br>
                                                                                                 <label
@@ -175,7 +174,6 @@
                                                                                                         value="grande">
                                                                                                         Grande
                                                                                                     </option>
-                                                                                                    <!-- Ajoutez d'autres options de taille selon vos besoins -->
                                                                                                 </select>
                                                                                                 <br><br>
                                                                                                 <% } else { %>
@@ -270,7 +268,6 @@
                                                                                                                 value="vert">
                                                                                                                 Vert
                                                                                                             </option>
-                                                                                                            <!-- Ajoutez d'autres options de couleur selon vos besoins -->
                                                                                                         </select>
                                                                                                         <br>
                                                                                                         <label
@@ -290,7 +287,6 @@
                                                                                                                 value="grande">
                                                                                                                 Grande
                                                                                                             </option>
-                                                                                                            <!-- Ajoutez d'autres options de taille selon vos besoins -->
                                                                                                         </select>
                                                                                                         <br><br>
                                                                                                         <% } else { %>
@@ -351,10 +347,10 @@
                                                 </div>
                                             </div>
                                             <!-- Colonne pour la panier -->
-                                            <div class="col-md-6">
+                                            <div class="col-md-4">
                                                 <div class="card">
                                                     <div class="card-title">Panier :</div>
-                                                    <div class="card-body">
+                                                    <div class="card-body-panier">
                                                         <% if (panier.length> 0) { %>
                                                             <p>Total du panier : <%= totalPanier %> points</p>
                                                             <ul style="display: flex; flex-direction: column;">

@@ -46,6 +46,14 @@ body {
     border-radius: 0 0 5px 5px;
 }
 
+.card-body-panier {
+    background-color: #ddd;
+    color: #6b7d7d;
+    padding: 20px;
+    border-radius: 0 0 5px 5px;
+    font-size: 12px;
+}
+
 .col-md-6 {
     padding: 45px;
 }
@@ -164,8 +172,10 @@ img {
 .btn-container form .quantité,
 .btn-container form button {
     margin-right: 10px;
+    max-width: 100%; 
     /* Marge entre les éléments pour l'espacement */
 }
+
 
 .btn-container form label {
     color: #ddd;
