@@ -408,10 +408,10 @@ server.post("/ajouter-au-panier", async (req, res) => {
     // Vérifier si le cadeau est déjà dans le panier de l'utilisateur
     const panierUtilisateur = await getPanierUtilisateur(idUtilisateur);
 
-    const cadeauExistant = panierUtilisateur.find(cadeau => cadeau.id_cadeau.toString() === idCadeau);
+    const cadeauExistant = panierUtilisateur.find(cadeau => cadeau.id_cadeau.toString() === idCadeau && cadeau.couleur.toString() === couleur.toString() && cadeau.taille.toString() === taille.toString());
 
     //pour vérifier le stock du cadeau
-    if (cadeauExistant && cadeauExistant.couleur.toString() === couleur.toString() && cadeauExistant.taille.toString() === taille.toString()) {
+    if (cadeauExistant) {
         // Si le cadeau est déjà dans le panier, mettre à jour la quantité
         const nouvelleQuantite = parseInt(cadeauExistant.quantite) + parseInt(quantite);
         const cad = await getCadeauById(idCadeauI);
@@ -421,7 +421,7 @@ server.post("/ajouter-au-panier", async (req, res) => {
         } else {
             const client = await pool.connect();
             try {
-                await client.query("UPDATE panier SET quantite = $1 WHERE id_utilisateur = $2 AND id_cadeau = $3", [nouvelleQuantite, idUtilisateur, idCadeau]);
+                await client.query("UPDATE panier SET quantite = $1 WHERE id_utilisateur = $2 AND id_cadeau = $3 AND couleur=$4 AND taille=$5", [nouvelleQuantite, idUtilisateur, idCadeau,couleur,taille]);
                 console.log("Quantité du cadeau mise à jour avec succès dans le panier.");
             } catch (error) {
                 console.error("Erreur lors de la mise à jour de la quantité du cadeau dans le panier :", error);
