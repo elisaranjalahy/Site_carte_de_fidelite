@@ -29,7 +29,8 @@
     min-height: 142px;
 }
 
-.formCache {
+.formCache,
+.formNouvCadeau {
     display: none;
     line-height: 1;
     font-size: 14px;
@@ -43,4 +44,8 @@
     max-height: 15px;
     font-size: small;
 
+}
+
+h1 {
+    position: relative;
 }

@@ -33,6 +33,19 @@ $(document).ready(function () {
         }
     });
 
+    $(".btnAjouterCadeau").click(function () {
+        var etat = $(this).attr("etat");
+        if (etat === "afficher") {
+            $(this).closest(".blocGestion").find(".formNouvCadeau").show();
+            $(this).text("Fermer");
+            $(this).attr("etat", "fermer");
+        } else {
+            $(this).closest(".blocGestion").find(".formNouvCadeau").hide();
+            $(this).text("Ajouter des Cadeaux");
+            $(this).attr("etat", "afficher");
+        }
+    });
+
     $(".boutonModifier").click(function () {
         var input = $(".modifClient");
         var span = $(".defaut");

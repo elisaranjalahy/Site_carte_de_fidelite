@@ -25,11 +25,13 @@
 
 <body>
     <div class="container-fluid">
+
         <div class="row">
+
             <div class="col-12 centered">
-                <h1 class="titre">RESMU</h1>
+                <h1 class=" titre"><strong>RESMU</strong></h1>
                 <div class="login-form">
-                    <% if (erreur==="authentification" ) { %>
+                    <% if (erreur===" authentification" ) { %>
                         <div class="alert alert-danger erreur-message" role="alert">
                             Le nom d'utilisateur ou le mot de passe est incorrect.
                         </div>
@@ -39,25 +41,37 @@
                                     Veuillez vous connecter.
                                 </div>
                                 <% }%>
+                                    <div class="row">
+                                        <div class="col-12 ">
+                                            <form action="/connexion" method="POST" id="login-form">
+                                                <h2 class="text-center">Connexion</h2>
+                                                <div class="form-field">
+                                                    <input type="text" name="pseudo" class="form-control"
+                                                        placeholder="Pseudo" id="pseudo" required="required"
+                                                        autocomplete="off">
+                                                </div>
+                                                <div class="form-field">
+                                                    <input type="password" name="mdp" class="form-control"
+                                                        placeholder="Mot de passe" id="mdp" required="required"
+                                                        autocomplete="off">
+                                                </div>
+                                                <div class="form-group">
+                                                    <button type="submit" name="valider"
+                                                        class="btn btn-primary btn-block">Se
+                                                        connecter</button>
+                                                </div>
+                                            </form>
 
-                                    <form action="/connexion" method="POST" id="login-form">
-                                        <h2 class="text-center">Connexion</h2>
-                                        <div class="form-field">
-                                            <input type="text" name="pseudo" class="form-control" placeholder="Pseudo"
-                                                id="pseudo" required="required" autocomplete="off">
                                         </div>
-                                        <div class="form-field">
-                                            <input type="password" name="mdp" class="form-control"
-                                                placeholder="Mot de passe" id="mdp" required="required"
-                                                autocomplete="off">
+                                        <div class="col-lg-3 d-flex align-items-center justify-content-center "
+                                            style="margin-top: -16px;">
+                                            <img src=" images/logo.png" alt="Logo droit" class="img-fluid">
                                         </div>
-                                        <div class="form-group">
-                                            <button type="submit" name="valider" class="btn btn-primary btn-block">Se
-                                                connecter</button>
-                                        </div>
-                                    </form>
+                                    </div>
                 </div>
             </div>
+
+
         </div>
     </div>
 

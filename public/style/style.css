@@ -14,7 +14,10 @@ body {
     padding: 2%;
     width: 100%;
     color: white;
+
 }
+
+
 
 .head {
     text-align: center;
@@ -24,8 +27,27 @@ body {
     width: 100%;
     min-height: 120px;
     display: flex;
+    align-items: center;
+    /* Pour centrer verticalement le contenu de la bande */
+    position: relative;
 }
 
 .pseudo-taille {
     font-size: small;
+}
+
+.logo-grande {
+    max-width: 70px;
+    /* Redimensionner la largeur automatiquement */
+    max-height: 70px;
+    /* Utiliser 100% de la hauteur de la bande */
+    position: relative;
+    /* Position absolue pour aligner le logo à gauche */
+    left: 0;
+    /* Aligner le logo à gauche */
+    top: 0;
+    /* Aligner le logo en haut */
+    border: none;
+    margin-left: -5px;
+    margin-right: -15px;
 }
