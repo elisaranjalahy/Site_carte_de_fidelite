@@ -14,9 +14,7 @@ $(document).ready(function () {
             $(this).closest(".infoClient").find("ul[class^='paragrapheCache']").hide();
             $(this).text("Afficher informations");
             $(this).attr("etat", "afficher");
-            setTimeout(function () {
-                location.reload();
-            }, 400);
+
         }
     });
 
@@ -27,6 +25,7 @@ $(document).ready(function () {
             $(this).text("Fermer");
             $(this).attr("etat", "fermer");
         } else {
+
             $(this).closest(".blocGestion").find(".formCache").hide();
             $(this).text("Ajouter un nouveau client");
             $(this).attr("etat", "afficher");
@@ -82,6 +81,16 @@ $(document).ready(function () {
         $(".boutonSave").hide();
         location.reload();
     });
+
+    $('#aper').change(function () { //declenche l'aperçu du noveau ajouté à la bdd
+        if ($(this).is(':checked')) {
+            var imageUrl = $('#image').val();
+            $('.aperImg').attr('src', imageUrl);
+        } else {
+            $('.aperImg').attr('src', '');
+        }
+    });
+
 
 
 

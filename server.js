@@ -133,23 +133,6 @@ async function getMesCadeaux() {
     }
 }
 
-
-async function getEveryClient() {
-    const client = await pool.connect(); // Se connecte à la base de données
-    let result = [];
-    try {
-        const data = await client.query('SELECT * FROM clients');
-        for (let row of data.rows) {
-            result.push(row);
-        }
-        return result;
-    } catch (error) {
-        console.error('Erreur lors de la récupération des données de la table cadeaux', error.message);
-        result = [];
-        return result;
-    }
-}
-
 async function getPanierUtilisateur(idUtilisateur) {
     const client = await pool.connect();
     try {
@@ -266,7 +249,6 @@ async function renderErrorPage(res, errorMessage) {
     }
 }
 
-
 async function getAnniv(id_utilisateur) {
     const client = await pool.connect(); // Se connecte à la base de données
     try {
@@ -280,9 +262,9 @@ async function getAnniv(id_utilisateur) {
         client.release();
     }
 }
-//middleware
 
-//middleware pour gerer l'accessibilité au routes
+//Middleware
+
 async function estConnecté(req, res, next) {
 
     if (sessionStart) { //connecté
@@ -394,7 +376,6 @@ server.post("/deconnexion", (req, res) => {
     res.redirect("/connexion");
 });
 
-
 server.post("/ajouter-au-panier", async (req, res) => {
     const idCadeau = req.body.id_cadeau.toString();
     const idCadeauI = req.body.id_cadeau;
@@ -421,7 +402,7 @@ server.post("/ajouter-au-panier", async (req, res) => {
         } else {
             const client = await pool.connect();
             try {
-                await client.query("UPDATE panier SET quantite = $1 WHERE id_utilisateur = $2 AND id_cadeau = $3 AND couleur=$4 AND taille=$5", [nouvelleQuantite, idUtilisateur, idCadeau,couleur,taille]);
+                await client.query("UPDATE panier SET quantite = $1 WHERE id_utilisateur = $2 AND id_cadeau = $3 AND couleur=$4 AND taille=$5", [nouvelleQuantite, idUtilisateur, idCadeau, couleur, taille]);
                 console.log("Quantité du cadeau mise à jour avec succès dans le panier.");
             } catch (error) {
                 console.error("Erreur lors de la mise à jour de la quantité du cadeau dans le panier :", error);
@@ -459,7 +440,8 @@ server.post("/ajouter_client", async (req, res) => {
     try {
         await client.query('INSERT INTO clients (prenom, nom, pseudo, email, mot_de_passe, points_client, anniversaire, admin) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
             [prenom, nom, pseudo, email, mot_de_passe_par_defaut, points, newDate, admin === "true"]);
-        res.send("Nouveau client ajouté avec succès !");
+        console.log("Nouveau client ajouté avec succès !");
+        res.redirect("/gerante");
     } catch (error) {
         console.error('Erreur lors de l\'ajout du nouveau client :', error.message);
         res.status(500).send("Une erreur s'est produite lors de l'ajout du nouveau client.");
@@ -493,7 +475,6 @@ server.post("/maj_client", async (req, res) => {
         client.release();
     }
 });
-
 
 server.post("/valider-panier", async (req, res) => {
     const idUtilisateur = currentUser.id;
@@ -529,6 +510,23 @@ server.post("/supprimer-panier", async (req, res) => {
         await supprimerCadeauPanierUtilisateur(idUtilisateur, idCadeauASupprimer, couleur, taille);
         res.redirect("/index");
     }
+});
+
+server.post("/ajouter-cadeau", async (req, res) => {
+    const { nom, points, image, stock, menu } = req.body;
+    const cadeau = await pool.connect();
+    try {
+        await cadeau.query('INSERT INTO CADEAUX (NOM_CADEAU, POINTS_CADEAU, IMAGE_CADEAU, STOCK, MENU) VALUES ($1, $2, $3, $4, $5)',
+            [nom, points, image, stock, menu]);
+        console.log("Nouveau cadeau ajouté avec succès !");
+        res.redirect("/gerante");
+    } catch (error) {
+        console.error('Erreur lors de l\'ajout du nouveau cadeau :', error.message);
+        res.status(500).send("Une erreur s'est produite lors de l'ajout du nouveau cadeau.");
+    } finally {
+        cadeau.release();
+    }
+
 });
 
 

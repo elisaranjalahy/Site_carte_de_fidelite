@@ -20,6 +20,7 @@ body {
 
 }
 
+
 .info {
     padding: 10px;
     width: 100%;
@@ -141,6 +142,7 @@ img {
 .infoCadeau {
     color: white;
 
+
 }
 
 .image-container {
@@ -148,12 +150,15 @@ img {
     justify-content: center;
     align-items: center;
     height: 100px;
+
 }
 
 .imagecadeau {
     width: 100%;
     height: 100%;
     object-fit: cover;
+
+    border-radius: 10px;
 }
 
 .quantité {
@@ -172,7 +177,7 @@ img {
 .btn-container form .quantité,
 .btn-container form button {
     margin-right: 10px;
-    max-width: 100%; 
+    max-width: 100%;
     /* Marge entre les éléments pour l'espacement */
 }
 

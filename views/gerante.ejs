@@ -241,7 +241,7 @@
                                                     <label class="form-check-label" for="admin">Admin</label>
                                                 </div>
                                             </div>
-                                            <button type="submit" class="btn btn-primary">Ajouter</button>
+                                            <button type="submit" class="btn btn-primary ajtClient">Ajouter</button>
                                         </form>
 
                                     </ul>
@@ -254,12 +254,26 @@
                                     <ul class="formNouvCadeau">
 
 
-                                        <form action="/ajouter_client" method="POST" class="color">
+                                        <form action="/ajouter-cadeau" method="POST">
 
+                                            <div class="aperçu">
+                                                <!--ici apapraitra l'image-->
+                                                <img class="aperImg" src="">
+                                            </div>
                                             <div class=" form-group">
                                                 <label for="image">Lien Image</label>
-                                                <input type="text" class="form-control" id="prenom" name="image">
+                                                <input type="text" class="form-control" id="image" name="image">
                                             </div>
+                                            <div class="form-group">
+                                                <div class="form-check">
+                                                    <input type="checkbox" class="form-check-input" id="aper"
+                                                        name="aper" valur="true">
+                                                    <label class="form-check-label">Aperçu Image</label>
+                                                </div>
+                                            </div>
+
+
+
                                             <div class="form-group">
                                                 <label for="nom">Nom du cadeau</label>
                                                 <input type="text" class="form-control" id="nom" name="nom">
@@ -270,17 +284,16 @@
                                                 <input type="number" class="form-control" id="points" name="points">
                                             </div>
                                             <div class="form-group">
-                                                <label for="anniversaire">Anniversaire:</label>
-                                                <input type="date" class="form-control" id="anniversaire"
-                                                    name="anniversaire">
+                                                <label for="points">Stock</label>
+                                                <input type="number" class="form-control" id="stock" name="stock">
                                             </div>
                                             <div class="form-group">
-                                                <div class="form-check">
-                                                    <input type="checkbox" class="form-check-input" id="admin"
-                                                        name="admin" value="true">
-                                                    <label class="form-check-label" for="admin">Admin</label>
-                                                </div>
+                                                <input type="checkbox" class="form-check-input" name="menu"
+                                                    value="true">
+                                                <label class="form-check-label">Couleurs</label>
                                             </div>
+
+
                                             <button type="submit" class="btn btn-primary">Ajouter</button>
                                         </form>
 
