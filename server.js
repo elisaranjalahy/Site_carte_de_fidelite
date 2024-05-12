@@ -468,12 +468,14 @@ server.post("/maj_client", async (req, res) => {
         );
         console.log(req.body);
         console.log("Les modifications de @" + pseudo + " ont bien été prise en compte.");
+        res.redirect("/gerante");
     } catch (error) {
         console.error('Erreur lors de l\'ajout du nouveau client :', error.message);
         const cadeaux = await getCadeaux();
         const everyClient = await getEveryClient();
         res.render("gerante", { errAjtClient: true, errAjtCadeau: false, everyClient: everyClient, sessionStart: sessionStart, currentUser: currentUser, cadeaux: cadeaux });
     } finally {
+        res.redirect("/gerante");
         client.release();
     }
 });
@@ -613,7 +615,7 @@ server.get("/index", estConnecté, async (req, res) => {
     const dateActuelle = moment();
     const dateAnniversaire = moment(dateAnniversaireUtilisateur);
     let anniversaireClass = null;
-    if (dateActuelle.isSame(dateAnniversaire, 'day')) {
+    if (dateActuelle.month() === dateAnniversaire.month() && dateActuelle.date() === dateAnniversaire.date()) {
         anniversaireClass = "anniversaire";
     }
     if (currentUser.admin) {
