@@ -491,7 +491,6 @@ server.post("/maj_client", async (req, res) => {
 server.post("/maj_cadeaux", async (req, res) => {
     const { points, stock, id_cadeau } = req.body;
     const client = await pool.connect();
-    console.log("EHH");
     try {
 
         await client.query(
@@ -608,6 +607,22 @@ server.post("/supprimer_client", async (req, res) => {
     }
 });
 
+
+server.post("/supprimer_cadeau", async (req, res) => {
+    const id_cadeau = req.body.id_cadeau;
+    const cadeau = await pool.connect();
+    try {
+        await cadeau.query('DELETE FROM cadeaux WHERE id_cadeau = $1', [id_cadeau]);
+        console.log("cadeau supprimé avec succès !");
+        res.redirect("/pageCadeaux");
+    } catch (error) {
+        console.error('Erreur lors de la suppression du cadeau :', error.message);
+        res.status(500).send("Une erreur s'est produite lors de la suppression du client.");
+    } finally {
+        cadeau.release();
+
+    }
+});
 
 
 
