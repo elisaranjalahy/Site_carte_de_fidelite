@@ -472,6 +472,7 @@ server.post("/maj_client", async (req, res) => {
         console.error('Erreur lors de l\'ajout du nouveau client :', error.message);
         res.status(500).send("Une erreur s'est produite lors de la mise à jour des données du nouveau client.");
     } finally {
+        res.redirect("/gerante");
         client.release();
     }
 });
