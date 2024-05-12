@@ -470,7 +470,7 @@ server.post("/maj_client", async (req, res) => {
         console.log(req.body);
     } catch (error) {
         console.error('Erreur lors de l\'ajout du nouveau client :', error.message);
-        res.status(500).send("Une erreur s'est produite lors de l'ajout du nouveau client.");
+        res.status(500).send("Une erreur s'est produite lors de la mise à jour des données du nouveau client.");
     } finally {
         client.release();
     }
@@ -525,9 +525,26 @@ server.post("/ajouter-cadeau", async (req, res) => {
         res.status(500).send("Une erreur s'est produite lors de l'ajout du nouveau cadeau.");
     } finally {
         cadeau.release();
+
     }
 
 });
+
+server.post("/supprimer_client", async (req, res) => {
+    const pseu = req.body.pseudo;
+    const pseudo = await pool.connect();
+    try {
+        await pseudo.query('DELETE FROM clients WHERE pseudo = $1', [pseu]);
+        console.log("Le client @" + pseu + " a bien été supprimé : ");
+        res.redirect("/gerante");
+    } catch (error) {
+        console.error('Erreur lors de l\'ajout du nouveau cadeau :', error.message);
+        res.status(500).send("Une erreur s'est produite lors de la suppression du client.");
+    } finally {
+        pseudo.release();
+
+    }
+})
 
 
 

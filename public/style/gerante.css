@@ -20,6 +20,11 @@
 }
 
 
+.btnSupp {
+    font-size: 14px;
+    max-width: 50%;
+    position: relative;
+}
 
 .blocInfoClient {
     background-color: #6b7d7d;
