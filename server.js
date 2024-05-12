@@ -68,7 +68,7 @@ function clearUser(user) {
 //FONCTIONS
 
 
-//bdd
+//BDD
 
 async function getUser(pseudo, mdp) {
     const client = await pool.connect(); // Se connecte à la base de données
@@ -273,7 +273,8 @@ async function getAnniv(id_utilisateur) {
     }
 }
 
-//Middleware
+
+//MIDDLEWARE
 
 async function estConnecté(req, res, next) {
 
@@ -283,12 +284,12 @@ async function estConnecté(req, res, next) {
             let panier = req.session.panier || [];
             if (currentUser.admin) {
                 const everyClient = await getEveryClient();
-                res.render(pageActuelle, { errAjtClient: false, errAjtCadeau: false, everyClient: everyClient, sessionStart: false, currentUser: currentUser }); //rend la vue index avec le tableau cadeaux
+                res.render(pageActuelle, { err: false, errAjtClient: false, errAjtCadeau: false, everyClient: everyClient, sessionStart: false, currentUser: currentUser }); //rend la vue index avec le tableau cadeaux
 
             } else {
                 const error = null;
                 const anniv = null;
-                res.render(pageActuelle, { sessionStart: false, currentUser: currentUser, panier: panier, error: error, anniversaireClass: anniv }); //rend la vue index avec le tableau cadeaux
+                res.render(pageActuelle, { err: false, sessionStart: false, currentUser: currentUser, panier: panier, error: error, anniversaireClass: anniv }); //rend la vue index avec le tableau cadeaux
             }
             clearUser(currentUser);
 
@@ -301,9 +302,9 @@ async function estConnecté(req, res, next) {
 
         if (req.path !== "/connexion") { //demande d'acceder à une page du site
             if (req.path == "/connexion?erreur=authentification") {
-                res.render(pageActuelle, { erreur: "authentification", sessionStart: sessionStart });
+                res.render(pageActuelle, { erreur: "authentification", sessionStart: sessionStart, newMdp: false });
             } else {
-                res.render(pageActuelle, { erreur: "connexion", sessionStart: sessionStart });
+                res.render(pageActuelle, { erreur: "connexion", sessionStart: sessionStart, newMdp: false });
 
 
             }
@@ -317,7 +318,14 @@ async function estConnecté(req, res, next) {
 
 }
 
-
+function premiereCo(req, res, next) {
+    let erreur = req.query.erreur || "";
+    if (currentUser.mdp === 'defaut') {
+        res.render("connexion", { erreur: erreur, newMdp: true, currentUser: currentUser });
+    } else {
+        next();
+    }
+}
 
 
 
@@ -326,7 +334,8 @@ async function estConnecté(req, res, next) {
 //GESTION DES ROUTES
 
 
-//post
+//POST
+
 server.post("/connexion", async (req, res) => {
 
     currentUser["pseudo"] = req.body.pseudo;
@@ -358,7 +367,7 @@ server.post("/connexion", async (req, res) => {
         if (currentUser.admin) {
             res.redirect("/gerante");
         } else {
-            res.redirect("/index");;
+            res.redirect("/index");
         }
     } else {
         // authentification ratée, redirection de l'utilisateur vers la page de connexion 
@@ -466,7 +475,6 @@ server.post("/maj_client", async (req, res) => {
              WHERE pseudo = $6`,
             [prenom, nom, email, points, newDate, pseudo]
         );
-        console.log(req.body);
         console.log("Les modifications de @" + pseudo + " ont bien été prise en compte.");
         res.redirect("/gerante");
     } catch (error) {
@@ -506,7 +514,26 @@ server.post("/maj_cadeaux", async (req, res) => {
 
 });
 
+server.post("/newMDP", async (req, res) => {
+    const { mdp, pseudo } = req.body;
+    const client = await pool.connect();
 
+    try {
+        await client.query(
+            `UPDATE clients 
+         SET mot_de_passe = $1 WHERE pseudo = $2`,
+            [mdp, pseudo]
+        );
+        console.log("Mot de passe mis à jour avec succès !");
+        res.redirect("/connexion?erreur=connexion");
+    } catch (error) {
+        console.error('Erreur lors de l\'ajout du nouveau client :', error.message);
+        res.redirect("/connexion?erreur=authentification");
+    } finally {
+
+        client.release();
+    }
+})
 
 server.post("/valider-panier", async (req, res) => {
     const idUtilisateur = currentUser.id;
@@ -583,31 +610,31 @@ server.post("/supprimer_client", async (req, res) => {
 
 
 
-//get
+//GET
 
 //premiere page affichée au lancement du serveu: page de connexion
 server.get("/", (req, res) => {
     pageActuelle = "connexion";
     if (req.query.erreur === "authentification") {
-        res.render("connexion", { erreur: "authentification" });
+        res.render("connexion", { erreur: "authentification", newMdp: false });
     }
     if (req.query.erreur === "connexion") {
-        res.render("connexion", { erreur: "connexion" });
+        res.render("connexion", { erreur: "connexion", newMdp: false });
     }
     if (req.query.erreur !== "authentification" && req.query.erreur !== "authentification") {
-        res.render("connexion", { erreur: "" });
+        res.render("connexion", { erreur: "", newMdp: false });
     }
 });
 
 server.get("/connexion", estConnecté, (req, res) => {
     pageActuelle = "connexion";
     let erreur = req.query.erreur || "";
-    res.render("connexion", { erreur: erreur });
+    res.render("connexion", { erreur: erreur, newMdp: false });
 
 });
 
 // page d'accueil,  le site en général
-server.get("/index", estConnecté, async (req, res) => {
+server.get("/index", estConnecté, premiereCo, async (req, res) => {
     const idUtilisateur = currentUser.id;
     const panier = await getPanierUtilisateur(idUtilisateur); // Récupérez le panier de l'utilisateur avec les détails des cadeaux
     const totalPanier = await calculerTotalPanier(idUtilisateur);
@@ -615,6 +642,8 @@ server.get("/index", estConnecté, async (req, res) => {
     const dateActuelle = moment();
     const dateAnniversaire = moment(dateAnniversaireUtilisateur);
     let anniversaireClass = null;
+
+
     if (dateActuelle.month() === dateAnniversaire.month() && dateActuelle.date() === dateAnniversaire.date()) {
         anniversaireClass = "anniversaire";
     }
@@ -659,7 +688,7 @@ server.get("/pageCadeaux", estConnecté, async (req, res) => {
 });
 
 
-// route finale : l'argument next est ici ignoré
+
 server.use((req, res) => {
     // gestion des requêtes non attendues
     res.status(404).send("Page not found");
