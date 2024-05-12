@@ -38,9 +38,7 @@ const pool = new pg.Pool({
 let sessionStart = false;
 let pageActuelle = "connexion";
 
-
-
-
+//Informations user
 
 const currentUser = {
     prenom: "",
@@ -54,6 +52,18 @@ const currentUser = {
     id: 0
 };
 
+function clearUser(user) {
+    user["pseudo"] = "";
+    user["mdp"] = "";
+    user["anniversaire"] = "";
+    user["points"] = 0;
+    user["prenom"] = "";
+    user["nom"] = "";
+    user["email"] = "";
+    user["admin"] = false;
+    user["id"] = 0;
+
+}
 
 //FONCTIONS
 
@@ -241,7 +251,7 @@ async function renderErrorPage(res, errorMessage) {
         anniversaireClass = "anniversaire";
     }
     if (currentUser.admin) {
-        res.redirect("gerante");
+        res.redirect("/gerante");
     } else {
         pageActuelle = "index";
         const cadeaux = await getMesCadeaux();
@@ -273,7 +283,7 @@ async function estConnecté(req, res, next) {
             let panier = req.session.panier || [];
             if (currentUser.admin) {
                 const everyClient = await getEveryClient();
-                res.render(pageActuelle, { everyClient: everyClient, sessionStart: false, currentUser: currentUser }); //rend la vue index avec le tableau cadeaux
+                res.render(pageActuelle, { errAjtClient: false, errAjtCadeau: false, everyClient: everyClient, sessionStart: false, currentUser: currentUser }); //rend la vue index avec le tableau cadeaux
 
             } else {
                 const error = null;
@@ -307,20 +317,6 @@ async function estConnecté(req, res, next) {
 
 }
 
-//Fonctions auxiliaires
-
-function clearUser(user) {
-    user["pseudo"] = "";
-    user["mdp"] = "";
-    user["anniversaire"] = "";
-    user["points"] = 0;
-    user["prenom"] = "";
-    user["nom"] = "";
-    user["email"] = "";
-    user["admin"] = false;
-    user["id"] = 0;
-
-}
 
 
 
@@ -444,7 +440,9 @@ server.post("/ajouter_client", async (req, res) => {
         res.redirect("/gerante");
     } catch (error) {
         console.error('Erreur lors de l\'ajout du nouveau client :', error.message);
-        res.status(500).send("Une erreur s'est produite lors de l'ajout du nouveau client.");
+        const cadeaux = await getCadeaux();
+        const everyClient = await getEveryClient();
+        res.render("gerante", { errAjtClient: true, errAjtCadeau: false, everyClient: everyClient, sessionStart: sessionStart, currentUser: currentUser, cadeaux: cadeaux });
     } finally {
         client.release();
     }
@@ -461,6 +459,7 @@ server.post("/maj_client", async (req, res) => {
     const newDate = annee + "-" + mois + "-" + jour;
     const client = await pool.connect();
     try {
+
         await client.query(
             `UPDATE clients 
              SET prenom = $1, nom = $2, email = $3, points_client = $4, anniversaire = $5 
@@ -468,13 +467,44 @@ server.post("/maj_client", async (req, res) => {
             [prenom, nom, email, points, newDate, pseudo]
         );
         console.log(req.body);
+        console.log("Les modifications de @" + pseudo + " ont bien été prise en compte.");
     } catch (error) {
         console.error('Erreur lors de l\'ajout du nouveau client :', error.message);
-        res.status(500).send("Une erreur s'est produite lors de la mise à jour des données du nouveau client.");
+        const cadeaux = await getCadeaux();
+        const everyClient = await getEveryClient();
+        res.render("gerante", { errAjtClient: true, errAjtCadeau: false, everyClient: everyClient, sessionStart: sessionStart, currentUser: currentUser, cadeaux: cadeaux });
     } finally {
         client.release();
     }
 });
+
+server.post("/maj_cadeaux", async (req, res) => {
+    const { points, stock, id_cadeau } = req.body;
+    const client = await pool.connect();
+    try {
+
+        await client.query(
+            `UPDATE CADEAUX
+             SET POINTS_CADEAU = $1, STOCK = $2
+             WHERE ID_CADEAU = $3`,
+            [points, stock, id_cadeau]
+        );
+        console.log(req.body);
+        console.log("Les modifications ont bien été prise en compte.");
+        res.redirect("/pageCadeaux");
+    } catch (error) {
+        console.error('Erreur.', error.message);
+        const cadeaux = await getCadeaux();
+        const everyClient = await getEveryClient();
+        res.render("pageCadeaux", { err: true, everyClient: everyClient, sessionStart: sessionStart, currentUser: currentUser, cadeaux: cadeaux });
+
+    } finally {
+        client.release();
+    }
+
+});
+
+
 
 server.post("/valider-panier", async (req, res) => {
     const idUtilisateur = currentUser.id;
@@ -522,7 +552,9 @@ server.post("/ajouter-cadeau", async (req, res) => {
         res.redirect("/gerante");
     } catch (error) {
         console.error('Erreur lors de l\'ajout du nouveau cadeau :', error.message);
-        res.status(500).send("Une erreur s'est produite lors de l'ajout du nouveau cadeau.");
+        const cadeaux = await getCadeaux();
+        const everyClient = await getEveryClient();
+        res.render("gerante", { errAjtClient: false, errAjtCadeau: true, everyClient: everyClient, sessionStart: sessionStart, currentUser: currentUser, cadeaux: cadeaux });
     } finally {
         cadeau.release();
 
@@ -544,9 +576,12 @@ server.post("/supprimer_client", async (req, res) => {
         pseudo.release();
 
     }
-})
+});
 
 
+
+
+//get
 
 //premiere page affichée au lancement du serveu: page de connexion
 server.get("/", (req, res) => {
@@ -598,13 +633,29 @@ server.get("/gerante", estConnecté, async (req, res) => {
 
     } else {
 
-        pageActuelle = "admin";
-        const cadeaux = await getCadeaux();
+
         const everyClient = await getEveryClient();
         pageActuelle = "gerante";
-        res.render("gerante", { everyClient: everyClient, sessionStart: sessionStart, currentUser: currentUser, cadeaux: cadeaux });
+        res.render("gerante", { errAjtClient: false, errAjtCadeau: false, everyClient: everyClient, sessionStart: sessionStart, currentUser: currentUser });
     }
 });
+
+
+
+server.get("/pageCadeaux", estConnecté, async (req, res) => {
+    if (!currentUser.admin) {
+        const page = "/" + pageActuelle;
+        res.redirect("/" + pageActuelle);
+
+    } else {
+        const cadeaux = await getCadeaux();
+        const everyClient = await getEveryClient();
+        pageActuelle = "pageCadeaux";
+        res.render("pageCadeaux", { err: false, everyClient: everyClient, sessionStart: sessionStart, currentUser: currentUser, cadeaux: cadeaux });
+    }
+
+});
+
 
 // route finale : l'argument next est ici ignoré
 server.use((req, res) => {

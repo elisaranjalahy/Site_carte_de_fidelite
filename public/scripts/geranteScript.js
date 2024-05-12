@@ -37,10 +37,13 @@ $(document).ready(function () {
         if (etat === "afficher") {
             $(this).closest(".blocGestion").find(".formNouvCadeau").show();
             $(this).text("Fermer");
+
+            $(".btnVoirCadeau").hide();
             $(this).attr("etat", "fermer");
         } else {
             $(this).closest(".blocGestion").find(".formNouvCadeau").hide();
             $(this).text("Ajouter des Cadeaux");
+            $(".btnVoirCadeau").show();
             $(this).attr("etat", "afficher");
         }
     });
@@ -58,7 +61,16 @@ $(document).ready(function () {
     });
 
 
+    $(".boutonSave").click(function () {
+        var input = $(".modifClient");
+        var span = $(".defaut");
+        span.show();
+        input.hide();
+        $(".boutonModifier").show();
+        $(".boutonAnnuler").hide();
+        $(this).hide();
 
+    });
     $(".boutonAnnuler").click(function () {
         var input = $(".modifClient");
         var span = $(".defaut");

@@ -20,6 +20,8 @@
 }
 
 
+
+
 .btnSupp {
     font-size: 14px;
     max-width: 50%;
@@ -32,6 +34,7 @@
     margin-bottom: 15px;
     position: relative;
     min-height: 142px;
+    max-height: 600px;
 }
 
 .formCache,
@@ -43,12 +46,18 @@
 }
 
 .modifClient {
-    width: px;
+
     display: flex;
     position: relative;
     max-height: 15px;
     font-size: small;
 
+}
+
+.btnRetour {
+    max-width: 140px;
+    font-size: small;
+    max-height: 30px;
 }
 
 h1 {

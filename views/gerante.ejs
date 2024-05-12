@@ -70,274 +70,354 @@
                 </div>
             </div>
             <div class="container-fluid">
-                <div class="row ">
-                    <div class="col-sm-6 col-md-6">
-                        <div class="card-title"><strong>Clients</strong>
-                            <br><br>
-                            <div class="row">
-                                <!-- Clients existants -->
-                                <% everyClient.forEach(function(client, i) { if(client.pseudo !==currentUser.pseudo){ %>
-                                    <div class="col-lg-4 col-sm-12">
-                                        <ul class="blocInfoClient" style="background-color: rgb(45, 48, 52); ">
-                                            <li class="infoClient" style="max-width: 100%; ">
-                                                <h3>
-                                                    <span class="titres_client">@<%=client.pseudo %></span>
-                                                    <span style=" font-size: small;">
-                                                        <% if (client.admin){%>
-                                                            <strong style="color : rgb(160, 46, 46)"> (Admin)
-                                                            </strong>
-                                                            <% }%>
-                                                    </span>
-                                                </h3>
+                <div>
+                    <% if (errAjtClient) { %>
+                        <div class="alert alert-danger erreur-message" role="alert" style="text-align: center;">
+                            Erreur lors de l'enregistrement des données du client.
+                            <%}%>
+                                <% if (errAjtCadeau) { %>
+                                    <div class="alert alert-danger erreur-message" role="alert"
+                                        style="text-align: center;">
+                                        Erreur lors de l'enregistrement des données du cadeau.
+                                        <%}%>
+                                    </div>
+
+                                    <div class=" row ">
+                                        <div class=" col-sm-6 col-md-6">
+                                            <div class="card-title"><strong>Clients</strong>
+                                                <br><br>
+                                                <div class="row">
+                                                    <!-- Clients existants -->
+                                                    <% everyClient.reverse().forEach(function(client, i){
+                                                        if(client.pseudo !==currentUser.pseudo){ %>
+                                                        <div class="col-lg-4 col-sm-12">
+                                                            <ul class="blocInfoClient"
+                                                                style="background-color: rgb(45, 48, 52); ">
+                                                                <li class="infoClient" style="max-width: 100%; ">
+                                                                    <h3>
+                                                                        <span class="titres_client">@<%=client.pseudo %>
+                                                                        </span>
+                                                                        <span style=" font-size: small;">
+                                                                            <% if (client.admin){%>
+                                                                                <strong
+                                                                                    style="color : rgb(160, 46, 46); font-size: x-small;">
+                                                                                    (Admin)
+                                                                                </strong>
+                                                                                <% }%>
+                                                                        </span>
+                                                                    </h3>
 
 
 
-                                                <br>
-                                                <div class="d-flex flex-column align-items-center">
-                                                    <!-- Utilisation de flexbox pour aligner les boutons sur une colonne -->
-                                                    <!-- Bouton "Supprimer" -->
-                                                    <div class="mb-2">
-                                                        <button type="button" class="boutonAfficher<%= i %>"
-                                                            etat="afficher"
-                                                            style="max-width: 80%; font-size: medium;">Afficher
-                                                            informations</button>
-                                                        <form class="formSupp" id="formSupprimerClient<%= i %>"
-                                                            action="/supprimer_client" method="POST">
-                                                            <input type="hidden" name="pseudo"
-                                                                value="<%=client.pseudo %>">
+                                                                    <br>
+                                                                    <div class="d-flex flex-column align-items-center">
+                                                                        <!-- Utilisation de flexbox pour aligner les boutons sur une colonne -->
+                                                                        <!-- Bouton "Supprimer" -->
+                                                                        <div class="mb-2">
+                                                                            <button type="button"
+                                                                                class="boutonAfficher<%= i %>"
+                                                                                etat="afficher"
+                                                                                style="max-width: 80%; font-size: medium;">Afficher
+                                                                                informations</button>
+                                                                            <form class="formSupp"
+                                                                                id="formSupprimerClient<%= i %>"
+                                                                                action="/supprimer_client"
+                                                                                method="POST">
+                                                                                <input type="hidden" name="pseudo"
+                                                                                    value="<%=client.pseudo %>">
+                                                                                <button type="submit"
+                                                                                    class="btn btn-danger btn-sm btnSupp">Supprimer</button>
+                                                                            </form>
+                                                                        </div>
+
+
+                                                                        <form id="formClient" action="/maj_client"
+                                                                            method="POST">
+
+
+                                                                            <ul class="paragrapheCache<%= i %>"
+                                                                                style="display: none; line-height: 1; font-size: 14px;max-width: 100%;text-align: left;">
+                                                                                <br>
+                                                                                <span class="modifClient"
+                                                                                    style="display: none; text-decoration: underline;">
+                                                                                    Pseudo :
+                                                                                </span>
+                                                                                <input type="text"
+                                                                                    class="form-control modifClient"
+                                                                                    name="pseudo"
+                                                                                    value="<%=client.pseudo %>"
+                                                                                    required="required"
+                                                                                    style="display: none;" readonly>
+
+
+
+                                                                                <li class="data"
+                                                                                    style="margin-bottom: 5px;">
+                                                                                    <span
+                                                                                        class="titres_client">Nom</span>
+                                                                                    :
+                                                                                    <span class="defaut"
+                                                                                        data-field="nom">
+                                                                                        <%=client.nom %>
+                                                                                    </span>
+
+                                                                                    <input type="text"
+                                                                                        class="form-control modifClient"
+                                                                                        name="nom"
+                                                                                        value="<%=client.nom %>"
+                                                                                        required="required"
+                                                                                        style="display: none;">
+
+                                                                                </li>
+                                                                                <li style="margin-bottom: 5px;">
+                                                                                    <span
+                                                                                        class="titres_client">Prénom</span>
+                                                                                    :
+                                                                                    <span class="defaut"
+                                                                                        data-field="prenom">
+                                                                                        <%=client.prenom %>
+                                                                                    </span>
+                                                                                    <input type="text"
+                                                                                        class="form-control modifClient"
+                                                                                        name="prenom"
+                                                                                        value="<%=client.prenom %>"
+                                                                                        required="required"
+                                                                                        style="display: none;">
+
+                                                                                </li>
+                                                                                <li style="margin-bottom: 5px;">
+                                                                                    <span
+                                                                                        class="titres_client">Email</span>
+                                                                                    :
+                                                                                    <span class="defaut"
+                                                                                        data-field="email">
+                                                                                        <%=client.email %>
+                                                                                    </span>
+                                                                                    <input type="email"
+                                                                                        class="form-control modifClient"
+                                                                                        name="email"
+                                                                                        value="<%=client.email %>"
+                                                                                        required="required"
+                                                                                        style="display: none;">
+
+                                                                                </li>
+                                                                                <li style="margin-bottom: 5px;">
+                                                                                    <span
+                                                                                        class="titres_client">Points</span>
+                                                                                    :
+                                                                                    <span class="defaut"
+                                                                                        data-field="points">
+                                                                                        <%=client.points_client %>
+                                                                                    </span>
+                                                                                    <input type="number"
+                                                                                        class="form-control modifClient"
+                                                                                        name="points"
+                                                                                        value="<%=client.points_client %>"
+                                                                                        style="display: none;">
+
+                                                                                </li>
+                                                                                <li style="margin-bottom: 5px;">
+                                                                                    <span
+                                                                                        class="titres_client">Anniversaire</span>
+                                                                                    :
+                                                                                    <span class="defaut"
+                                                                                        data-field="anniversaire">
+                                                                                        <%=client.anniversaire %>
+                                                                                    </span>
+                                                                                    <input type="text"
+                                                                                        class="form-control modifClient"
+                                                                                        name="anniversaire"
+                                                                                        value="<%=client.anniversaire %>"
+                                                                                        required="required"
+                                                                                        style="display: none;">
+
+                                                                                </li>
+
+
+                                                                                <li style="margin-bottom: 5px;">
+                                                                                    <button type="button"
+                                                                                        class="boutonModifier">Modifier</button>
+                                                                                    <button type="submit"
+                                                                                        class="boutonSave"
+                                                                                        style="display: none;"
+                                                                                        etat="afficher">Enregistrer</button>
+
+                                                                                </li>
+
+                                                                            </ul>
+
+                                                                        </form>
+                                                                        <form method="get" action="/gerante">
+                                                                            <button type="submit" class="boutonAnnuler"
+                                                                                style="display: none; max-height: 30px; "
+                                                                                etat="afficher">annuler</button>
+                                                                        </form>
+
+
+
+                                                                </li>
+                                                            </ul>
+
+
+                                                        </div>
+                                                        <%}%>
+                                                            <% }); %>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+
+
+                                        <div class="col-sm-6 col-md-6">
+                                            <div class="card-title "><strong>Gestion du site</strong> </div>
+
+
+                                            <div class="blocGestion ">
+                                                <div class="row">
+                                                    <div class="col-md-6 col-sm-12">
+                                                        <button type="button"
+                                                            class="btn btn-primary w-100 btnAjouterClient"
+                                                            etat="afficher">Ajouter
+                                                            un
+                                                            nouveau
+                                                            client</button>
+
+                                                        <br><br>
+                                                        <ul class="formCache">
+
+
+                                                            <form action="/ajouter_client" method="POST" class="color">
+
+                                                                <div class=" form-group">
+                                                                    <label for="prenom">Prénom:</label>
+                                                                    <input type="text" class="form-control" id="prenom"
+                                                                        name="prenom" required="required">
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="nom">Nom:</label>
+                                                                    <input type="text" class="form-control" id="nom"
+                                                                        name="nom" required="required">
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="pseudo">Pseudo:</label>
+                                                                    <input type="text" class="form-control" id="pseudo"
+                                                                        name="pseudo" required="required">
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="email">Email:</label>
+                                                                    <input type="email" class="form-control" id="email"
+                                                                        name="email" required="required">
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="points">Points:</label>
+                                                                    <input type="number" class="form-control"
+                                                                        id="points" name="points" required="required">
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="anniversaire">Anniversaire:</label>
+                                                                    <input type="date" class="form-control"
+                                                                        id="anniversaire" name="anniversaire"
+                                                                        required="required">
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <div class="form-check">
+                                                                        <input type="checkbox" class="form-check-input"
+                                                                            id="admin" name="admin" value="true">
+                                                                        <label class="form-check-label"
+                                                                            for="admin">Admin</label>
+                                                                    </div>
+                                                                </div>
+                                                                <button type="submit"
+                                                                    class="btn btn-primary ajtClient">Ajouter</button>
+                                                            </form>
+
+                                                        </ul>
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-12">
+
+                                                        <button type="button"
+                                                            class="btn btn-primary w-100 btnAjouterCadeau"
+                                                            etat="afficher">Ajouter des
+                                                            Cadeaux</button>
+                                                        <br> <br>
+                                                        <form action="/pageCadeaux" method="GET">
                                                             <button type="submit"
-                                                                class="btn btn-danger btn-sm btnSupp">Supprimer</button>
+                                                                class="btn btn-primary w-100 btnVoirCadeau"
+                                                                etat="afficher">Gestion des Cadeaux</button>
                                                         </form>
+                                                        <br><br>
+                                                        <ul class="formNouvCadeau">
+
+
+                                                            <form action="/ajouter-cadeau" method="POST">
+
+                                                                <div class="aperçu">
+                                                                    <!--ici apapraitra l'image-->
+                                                                    <img class="aperImg" src="">
+                                                                </div>
+                                                                <div class=" form-group">
+                                                                    <label for="image">Lien Image</label>
+                                                                    <input type="text" class="form-control" id="image"
+                                                                        name="image">
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <div class="form-check">
+                                                                        <input type="checkbox" class="form-check-input"
+                                                                            id="aper" name="aper" valur="true">
+                                                                        <label class="form-check-label">Aperçu
+                                                                            Image</label>
+                                                                    </div>
+                                                                </div>
+
+
+
+                                                                <div class="form-group">
+                                                                    <label for="nom">Nom du cadeau</label>
+                                                                    <input type="text" class="form-control" id="nom"
+                                                                        name="nom">
+                                                                </div>
+
+                                                                <div class="form-group">
+                                                                    <label for="points">Points</label>
+                                                                    <input type="number" class="form-control"
+                                                                        id="points" name="points">
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="points">Stock</label>
+                                                                    <input type="number" class="form-control" id="stock"
+                                                                        name="stock">
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <input type="checkbox" class="form-check-input"
+                                                                        name="menu" value="true">
+                                                                    <label class="form-check-label">Couleurs</label>
+                                                                </div>
+
+
+                                                                <button type="submit"
+                                                                    class="btn btn-primary">Ajouter</button>
+                                                            </form>
+
+                                                        </ul>
+
                                                     </div>
 
 
 
-                                                    <form id="formClient" action="/maj_client" method="POST">
+                                                </div>
 
 
-                                                        <ul class="paragrapheCache<%= i %>"
-                                                            style="display: none; line-height: 1; font-size: 14px;max-width: 100%;text-align: left;">
-                                                            <br>
-                                                            <span class="modifClient"
-                                                                style="display: none; text-decoration: underline;">
-                                                                Pseudo :
-                                                            </span>
-                                                            <input type="text" class="form-control modifClient"
-                                                                name="pseudo" value="<%=client.pseudo %>"
-                                                                style="display: none;" readonly>
-
-
-
-                                                            <li class="data" style="margin-bottom: 5px;">
-                                                                <span class="titres_client">Nom</span> :
-                                                                <span class="defaut" data-field="nom">
-                                                                    <%=client.nom %>
-                                                                </span>
-
-                                                                <input type="text" class="form-control modifClient"
-                                                                    name="nom" value="<%=client.nom %>"
-                                                                    style="display: none;">
-
-                                                            </li>
-                                                            <li style="margin-bottom: 5px;">
-                                                                <span class="titres_client">Prénom</span> :
-                                                                <span class="defaut" data-field="prenom">
-                                                                    <%=client.prenom %>
-                                                                </span>
-                                                                <input type="text" class="form-control modifClient"
-                                                                    name="prenom" value="<%=client.prenom %>"
-                                                                    style="display: none;">
-
-                                                            </li>
-                                                            <li style="margin-bottom: 5px;">
-                                                                <span class="titres_client">Email</span> :
-                                                                <span class="defaut" data-field="email">
-                                                                    <%=client.email %>
-                                                                </span>
-                                                                <input type="email" class="form-control modifClient"
-                                                                    name="email" value="<%=client.email %>"
-                                                                    style="display: none;">
-
-                                                            </li>
-                                                            <li style="margin-bottom: 5px;">
-                                                                <span class="titres_client">Points</span> :
-                                                                <span class="defaut" data-field="points">
-                                                                    <%=client.points_client %>
-                                                                </span>
-                                                                <input type="number" class="form-control modifClient"
-                                                                    name="points" value="<%=client.points_client %>"
-                                                                    style="display: none;">
-
-                                                            </li>
-                                                            <li style="margin-bottom: 5px;">
-                                                                <span class="titres_client">Anniversaire</span> :
-                                                                <span class="defaut" data-field="anniversaire">
-                                                                    <%=client.anniversaire %>
-                                                                </span>
-                                                                <input type="text" class="form-control modifClient"
-                                                                    name="anniversaire"
-                                                                    value="<%=client.anniversaire %>"
-                                                                    style="display: none;">
-
-                                                            </li>
-
-
-                                                            <li style="margin-bottom: 5px;">
-                                                                <button type="button"
-                                                                    class="boutonModifier">Modifier</button>
-                                                                <button type="submit" class="boutonSave"
-                                                                    style="display: none;"
-                                                                    etat="afficher">Enregistrer</button>
-                                                                <button type="button" class="boutonAnnuler"
-                                                                    style="display: none;"
-                                                                    etat="afficher">annuler</button>
-
-
-                                                            </li>
-
-                                                        </ul>
-
-                                                    </form>
-
-                                            </li>
-                                        </ul>
-
-
+                                            </div>
+                                        </div>
                                     </div>
-                                    <%}%>
-                                        <% }); %>
-                            </div>
-                        </div>
-                    </div>
 
 
 
-
-                    <div class="col-sm-6 col-md-6">
-                        <div class="card-title "><strong>Gestion du site</strong></div>
-                        <div class="blocGestion ">
-
-                            <div class="row">
-                                <div class="col-md-6 col-sm-12">
-                                    <button type="button" class="btn btn-primary w-100 btnAjouterClient"
-                                        etat="afficher">Ajouter
-                                        un
-                                        nouveau
-                                        client</button>
-
-                                    <br><br>
-                                    <ul class="formCache">
-
-
-                                        <form action="/ajouter_client" method="POST" class="color">
-
-                                            <div class=" form-group">
-                                                <label for="prenom">Prénom:</label>
-                                                <input type="text" class="form-control" id="prenom" name="prenom">
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="nom">Nom:</label>
-                                                <input type="text" class="form-control" id="nom" name="nom">
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="pseudo">Pseudo:</label>
-                                                <input type="text" class="form-control" id="pseudo" name="pseudo">
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="email">Email:</label>
-                                                <input type="email" class="form-control" id="email" name="email">
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="points">Points:</label>
-                                                <input type="number" class="form-control" id="points" name="points">
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="anniversaire">Anniversaire:</label>
-                                                <input type="date" class="form-control" id="anniversaire"
-                                                    name="anniversaire">
-                                            </div>
-                                            <div class="form-group">
-                                                <div class="form-check">
-                                                    <input type="checkbox" class="form-check-input" id="admin"
-                                                        name="admin" value="true">
-                                                    <label class="form-check-label" for="admin">Admin</label>
-                                                </div>
-                                            </div>
-                                            <button type="submit" class="btn btn-primary ajtClient">Ajouter</button>
-                                        </form>
-
-                                    </ul>
-                                </div>
-                                <div class="col-md-6 col-sm-12">
-                                    <button type="button" class="btn btn-primary w-100 btnAjouterCadeau"
-                                        etat="afficher">Ajouter des
-                                        Cadeaux</button>
-                                    <br><br>
-                                    <ul class="formNouvCadeau">
-
-
-                                        <form action="/ajouter-cadeau" method="POST">
-
-                                            <div class="aperçu">
-                                                <!--ici apapraitra l'image-->
-                                                <img class="aperImg" src="">
-                                            </div>
-                                            <div class=" form-group">
-                                                <label for="image">Lien Image</label>
-                                                <input type="text" class="form-control" id="image" name="image">
-                                            </div>
-                                            <div class="form-group">
-                                                <div class="form-check">
-                                                    <input type="checkbox" class="form-check-input" id="aper"
-                                                        name="aper" valur="true">
-                                                    <label class="form-check-label">Aperçu Image</label>
-                                                </div>
-                                            </div>
-
-
-
-                                            <div class="form-group">
-                                                <label for="nom">Nom du cadeau</label>
-                                                <input type="text" class="form-control" id="nom" name="nom">
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label for="points">Points</label>
-                                                <input type="number" class="form-control" id="points" name="points">
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="points">Stock</label>
-                                                <input type="number" class="form-control" id="stock" name="stock">
-                                            </div>
-                                            <div class="form-group">
-                                                <input type="checkbox" class="form-check-input" name="menu"
-                                                    value="true">
-                                                <label class="form-check-label">Couleurs</label>
-                                            </div>
-
-
-                                            <button type="submit" class="btn btn-primary">Ajouter</button>
-                                        </form>
-
-                                    </ul>
-
-                                </div>
-
-
-
-                            </div>
 
 
                         </div>
-                    </div>
-                </div>
 
 
 
-
-
-            </div>
-
-
-
-            </body>
+                        </body>

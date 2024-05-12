@@ -80,7 +80,7 @@ img {
 }
 
 .titre_cadeau {
-
+    font-size: 90%;
     color: rgb(221, 227, 221);
     text-decoration: underline;
     display: flex;
@@ -124,15 +124,20 @@ img {
 
 .bloc-cadeau,
 .bloc-panier {
-    margin-left: 15px; /* Ajouter une marge à gauche */
-    margin-right: 15px; /* Ajouter une marge à droite */
+    margin-left: 15px;
+    /* Ajouter une marge à gauche */
+    margin-right: 15px;
+    /* Ajouter une marge à droite */
 }
 
 @media (max-width: 992px) {
+
     .bloc-cadeau,
     .bloc-panier {
-        margin-left: 0; /* Réinitialiser la marge à gauche sur des écrans plus petits */
-        margin-right: 0; /* Réinitialiser la marge à droite sur des écrans plus petits */
+        margin-left: 0;
+        /* Réinitialiser la marge à gauche sur des écrans plus petits */
+        margin-right: 0;
+        /* Réinitialiser la marge à droite sur des écrans plus petits */
     }
 }
 

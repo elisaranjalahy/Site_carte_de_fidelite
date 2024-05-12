@@ -17,7 +17,18 @@ body {
 
 }
 
+.formModifCadeau {
 
+    font-size: 90%;
+    color: rgb(221, 227, 221);
+    display: flex;
+    max-height: 30px;
+    padding-left: 20px;
+}
+
+.boutonModifier {
+    position: relative;
+}
 
 .head {
     text-align: center;
