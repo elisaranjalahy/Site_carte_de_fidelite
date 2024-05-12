@@ -69,12 +69,12 @@
                     </div>
                 </div>
 
+                <div class="container-fluid">
 
-                <div class="row">
+                    <div class="row">
 
-                    <!-- Colonne pour les cadeaux -->
-                    <div class="col-md-12 ">
-                        <div class="bloc-cadeau">
+                        <!-- Colonne pour les cadeaux -->
+                        <div class="col-md-12 ">
                             <div class="card-title" style="font-size: large;"><strong>Liste des
                                     cadeaux</strong>
                                 <% if (err) { %>
@@ -93,7 +93,7 @@
                                             <!-- Boucle pour afficher les cadeaux -->
                                             <% if(sessionStart){ cadeaux.reverse().forEach(function(cadeau, i) { %>
 
-                                                <div class="col-md-3 col-sm-6 ">
+                                                <div class="col-lg-3 col-md-4 col-sm-6 ">
                                                     <ul class="blocInfoCadeau">
                                                         <li class="infoCadeau">
                                                             <h6 class="titre_cadeau">
@@ -109,7 +109,7 @@
                                                             </p>
 
                                                             <div class="image-container">
-                                                                <img class="imagecadeau" 
+                                                                <img class="imagecadeau"
                                                                     src="<%=cadeau.image_cadeau %>">
 
                                                             </div>
@@ -139,16 +139,28 @@
 
 
                                                                 </form>
-                                                                <form method="get" action="/pageCadeaux">
-                                                                    <button type="submit"
-                                                                        class="boutonAnnuler">Annuler</button>
-                                                                </form>
+                                                                <div class="form-container bouton">
+                                                                    <form method="get" action="/pageCadeaux">
+                                                                        <button type="submit"
+                                                                            class="boutonAnnuler w-100">Annuler</button>
+                                                                    </form>
+                                                                    <form action="/supprimer_cadeau" method="POST">
+                                                                        <input type="hidden" name="id_cadeau"
+                                                                            value="<%=cadeau.id_cadeau %>">
+                                                                        <button type="submit"
+                                                                            class="btn btn-danger btn-sm supp w-100">Supprimer</button>
+                                                                    </form>
+                                                                </div>
                                                             </div>
                                                             <br>
                                                         </li>
                                                     </ul>
                                                 </div>
                                                 <% })} %>
+                                        </div>
+                                    </div>
+                            </div>
+                        </div>
 
 
 </body>

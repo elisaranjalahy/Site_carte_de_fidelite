@@ -491,6 +491,7 @@ server.post("/maj_client", async (req, res) => {
 server.post("/maj_cadeaux", async (req, res) => {
     const { points, stock, id_cadeau } = req.body;
     const client = await pool.connect();
+    console.log("EHH");
     try {
 
         await client.query(

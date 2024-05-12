@@ -19,7 +19,16 @@
 
 }
 
+.bouton {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+}
 
+.bouton form {
+    margin-right: 10px;
+}
 
 
 .btnSupp {
