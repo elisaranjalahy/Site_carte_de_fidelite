@@ -578,7 +578,7 @@ server.get("/index", estConnecté, async (req, res) => {
     const dateActuelle = moment();
     const dateAnniversaire = moment(dateAnniversaireUtilisateur);
     let anniversaireClass = null;
-    if (dateActuelle.isSame(dateAnniversaire, 'day')) {
+    if (dateActuelle.month() === dateAnniversaire.month() && dateActuelle.date() === dateAnniversaire.date()) {
         anniversaireClass = "anniversaire";
     }
     if (currentUser.admin) {

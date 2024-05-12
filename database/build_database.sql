@@ -65,7 +65,7 @@ INSERT INTO CLIENTS (
     'jeanbav@gmail.com',
     'JeanBav',
     100,
-    '2024-05-17',
+    '1999-05-17',
     FALSE
 ),
 (
@@ -75,7 +75,7 @@ INSERT INTO CLIENTS (
     'fetefete@gmail.com',
     'AZERTY',
     100,
-    '2024-05-10',
+    '2001-05-12',
     FALSE
 ),
 (
@@ -85,7 +85,7 @@ INSERT INTO CLIENTS (
     'janaze@gmail.com',
     'JanaAyadi',
     100,
-    '2024-06-10',
+    '2003-06-10',
     FALSE
 );
 
