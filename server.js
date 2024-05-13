@@ -239,6 +239,19 @@ async function reduireQuantiteCadeau(idUtilisateur, idCadeauASupprimer, couleur,
     }
 }
 
+async function reduireStockCadeau(idUtilisateur, nouveauStock) {
+    const client = await pool.connect();
+    try {
+        await client.query('UPDATE cadeaux SET stock = $1 WHERE id_cadeau = $2 ', [nouveauStock,idUtilisateur]);
+        console.log("Stock du cadeau réduite avec succès.");
+    } catch (error) {
+        console.error('Erreur lors de la réduction du stock du cadeau dans le panier :', error.message);
+        throw error;
+    } finally {
+        client.release();
+    }
+}
+
 async function renderErrorPage(res, errorMessage) {
     const idUtilisateur = currentUser.id;
     const panier = await getPanierUtilisateur(idUtilisateur); // Récupérez le panier de l'utilisateur avec les détails des cadeaux
@@ -400,6 +413,7 @@ server.post("/ajouter-au-panier", async (req, res) => {
         // Si le cadeau est déjà dans le panier, mettre à jour la quantité
         const nouvelleQuantite = parseInt(cadeauExistant.quantite) + parseInt(quantite);
         const cad = await getCadeauById(idCadeauI);
+        console.log("cad stock ",cad);
         if (nouvelleQuantite > cad.stock) {
             const error = "Pas assez de stock pour : " + cadeauExistant.nom_cadeau;
             await renderErrorPage(res, error);
@@ -541,6 +555,14 @@ server.post("/valider-panier", async (req, res) => {
         // Déduire les points du total des points de l'utilisateur
         const nouveauxPoints = currentUser.points - totalPanier;
         await mettreAJourPointsUtilisateur(idUtilisateur, nouveauxPoints);
+
+        // Mettre à jour le stock des cadeaux
+        const panier = await getPanierUtilisateur(idUtilisateur);
+        for (const cadeau of panier) {
+            const cad=await getCadeauById(cadeau.id_cadeau);
+            const nouveauStock = cad.stock - cadeau.quantite;
+            await reduireStockCadeau(cadeau.id_cadeau, nouveauStock);
+        }
 
         // Vider le panier de l'utilisateur
         await viderPanierUtilisateur(idUtilisateur);
