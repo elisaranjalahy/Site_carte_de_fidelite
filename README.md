@@ -24,23 +24,20 @@ Pour créer la base de données :
 
 ***Connection à Postgres***
 0) Se placer à la racine du projet
-1) Entrez la commande `psql` puis `\password`. Redéfinissez votre mot de passe postgres comme étant `raliz`.
-2) Entrez la commande `\q` ou `quit`
-3) Entrez la commande : `psql -U id -W postgres` où ***id*** est votre identifiant et entrez le mot de passe : **raliz** 
+1) Entrez la commande : `psql -U id -W postgres` où ***id*** est votre identifiant et entrez le mot de passe : **raliz** 
+2) Entrez la commande : `\password`. Redéfinissez votre mot de passe postgres comme étant `raliz`.
 
 ***Vous êtes à présent dans postgres***
 
-4) Entrez la requête : `create database my_database;`
-5) Entrez la commande : `\c my_database` et entrez le mot de passe **raliz** <!-- cela vous connectera à la base de données>
-6) Entrez la commande : `\i database/build_database.sql` <!--va construire les tables-->
-7) Entrez la commande : `\quit` ou `\q` <!--ce qui vous fera sortir de Postgres-->
+3) Entrez la requête : `create database my_database;`
+4) Entrez la commande : `\c my_database` et entrez le mot de passe **raliz** <!-- cela vous connectera à la base de données>
+5) Entrez la commande : `\i database/build_database.sql` <!--va construire les tables-->
+6) Entrez la commande : `\quit` ou `\q` <!--ce qui vous fera sortir de Postgres-->
 
 
 ***Informations supplémentaires:***
 
 Pour supprimer la base de données et se deconnecter :
-
-0) Répétez les étapes précédentes 0 et 3 (uniquement)
 
 ***Dans postgres*** 
 
@@ -52,7 +49,9 @@ Pour supprimer la base de données et se deconnecter :
 
 ***b)LANCEMENT DU SERVEUR***
 
-Une fois l'étape 7 précédente (dans I.a) effectuée:
+Une fois l'étape 6 précédente (dans I.a) effectuée:
+
+Il faut d'abords installer les modules necessaire avec npm install 'module' avec module = express,body-parser,express-session,moment,pg,path
 
 Toujours à la racine, entrez la commmande : `node server.js` puis rendez-vous à l'url affiché dans votre terminal.
 Vous pouvez à présent vous connecter et naviguer sur le site.
