@@ -90,6 +90,8 @@
                                             </div>
                                         </div>
 
+                                        <!--Fin de la Banniere-->
+
 
                                         <div class="row">
                                             <!-- Colonne pour les cadeaux -->
@@ -123,7 +125,7 @@
                                                                                     </div>
 
                                                                                     <div class="btn-container">
-                                                                                        <!-- Conteneur pour centrer le bouton -->
+
                                                                                         <br>
                                                                                         <form
                                                                                             action="/ajouter-au-panier"
@@ -234,7 +236,7 @@
                                                                                             </div>
 
                                                                                             <div class="btn-container">
-                                                                                                <!-- Conteneur pour centrer le bouton -->
+
                                                                                                 <br>
                                                                                                 <form
                                                                                                     action="/ajouter-au-panier"
@@ -347,7 +349,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <!-- Colonne pour la panier -->
+                                            <!-- Panier -->
                                             <div class="col-md-4 panier">
                                                 <div class="bloc-panier">
                                                     <div class="card-title">Panier :</div>
@@ -359,9 +361,11 @@
                                                                     <li
                                                                         style="display: flex; justify-content: space-between;">
                                                                         <br>
-                                                                        <%= item.nom_cadeau %> | <%= item.couleur %> |
+                                                                        <%= item.nom_cadeau %> | <%= item.couleur %>
+                                                                                |
                                                                                 <%= item.taille %> | <%=
-                                                                                        item.points_cadeau %> points -
+                                                                                        item.points_cadeau %> points
+                                                                                        -
                                                                                         Quantité
                                                                                         :
                                                                                         <%= item.quantite %>

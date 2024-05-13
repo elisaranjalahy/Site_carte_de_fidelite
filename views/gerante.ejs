@@ -69,6 +69,10 @@
                     </div>
                 </div>
             </div>
+
+            <!--Fin de la Banniere-->
+
+
             <div class="container-fluid">
                 <div>
                     <% if (errAjtClient) { %>
@@ -87,7 +91,9 @@
                                             <div class="card-title"><strong>Clients</strong>
                                                 <br><br>
                                                 <div class="row">
+
                                                     <!-- Clients existants -->
+
                                                     <% everyClient.reverse().forEach(function(client, i){
                                                         if(client.pseudo !==currentUser.pseudo){ %>
                                                         <div class="col-lg-4 col-sm-12">
@@ -111,7 +117,7 @@
 
                                                                     <br>
                                                                     <div class="d-flex flex-column align-items-center">
-                                                                        <!-- Utilisation de flexbox pour aligner les boutons sur une colonne -->
+
                                                                         <!-- Bouton "Supprimer" -->
                                                                         <div class="mb-2">
                                                                             <button type="button"
@@ -130,7 +136,7 @@
                                                                             </form>
                                                                         </div>
 
-
+                                                                        <!--Modification données des clients-->
                                                                         <form id="formClient" action="/maj_client"
                                                                             method="POST">
 
@@ -268,7 +274,7 @@
 
 
 
-
+                                        <!--Gestion du site-->
                                         <div class="col-sm-6 col-md-6">
                                             <div class="card-title "><strong>Gestion du site</strong> </div>
 
@@ -286,7 +292,7 @@
                                                         <br><br>
                                                         <ul class="formCache">
 
-
+                                                            <!--Ajouter Nouveau Client-->
                                                             <form action="/ajouter_client" method="POST" class="color">
 
                                                                 <div class=" form-group">
@@ -349,6 +355,7 @@
                                                         <br><br>
                                                         <ul class="formNouvCadeau">
 
+                                                            <!--Ajouter Nouveau Cadeau-->
 
                                                             <form action="/ajouter-cadeau" method="POST">
 

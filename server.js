@@ -257,6 +257,7 @@ async function renderErrorPage(res, errorMessage) {
         const cadeaux = await getMesCadeaux();
         res.render("index", { sessionStart: sessionStart, currentUser: currentUser, cadeaux: cadeaux, panier: panier, totalPanier: totalPanier, error: errorMessage, anniversaireClass: anniversaireClass }); // Rend la vue index avec le tableau de cadeaux et le panier de l'utilisateur
     }
+
 }
 
 async function getAnniv(id_utilisateur) {
@@ -360,8 +361,6 @@ server.post("/connexion", async (req, res) => {
         currentUser["id"] = userData["id"];
         // authentification réussie, redirection de l'utilisateur vers la page d'accueil
 
-        //enregistré comme connecté avec un cookie
-        //res.cookie('monCookie', 'authentifié', { maxAge: 365 * 24 * 60 * 60 * 1000, httpOnly: true }); // maxAge définit la durée de vie du cookie en millisecondes (ici on met 1an)
         console.log(resultat.rows);
         sessionStart = true; //on démarre une "session"
         if (currentUser.admin) {
@@ -483,7 +482,7 @@ server.post("/maj_client", async (req, res) => {
         const everyClient = await getEveryClient();
         res.render("gerante", { errAjtClient: true, errAjtCadeau: false, everyClient: everyClient, sessionStart: sessionStart, currentUser: currentUser, cadeaux: cadeaux });
     } finally {
-        res.redirect("/gerante");
+
         client.release();
     }
 });
@@ -613,7 +612,7 @@ server.post("/supprimer_cadeau", async (req, res) => {
     const cadeau = await pool.connect();
     try {
         await cadeau.query('DELETE FROM cadeaux WHERE id_cadeau = $1', [id_cadeau]);
-        console.log("cadeau supprimé avec succès !");
+        console.log("Cadeau supprimé avec succès !");
         res.redirect("/pageCadeaux");
     } catch (error) {
         console.error('Erreur lors de la suppression du cadeau :', error.message);

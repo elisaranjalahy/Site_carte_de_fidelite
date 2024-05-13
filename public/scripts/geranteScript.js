@@ -94,7 +94,7 @@ $(document).ready(function () {
         location.reload();
     });
 
-    $('#aper').change(function () { //declenche l'aperçu du noveau ajouté à la bdd
+    $('#aper').change(function () { //declenche l'aperçu du nouveau cadeau ajouté à la bdd
         if ($(this).is(':checked')) {
             var imageUrl = $('#image').val();
             $('.aperImg').attr('src', imageUrl);
